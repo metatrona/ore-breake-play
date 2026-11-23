@@ -3,15 +3,15 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:#19151f;color:#fff0d1;font:600 14px system-ui,sans-serif}main{max-width:460px;margin:auto;padding:18px 14px max(14px,env(safe-area-inset-bottom))}h1{font-size:26px;margin:0;color:#ffd585;letter-spacing:-1px}header,.row{display:flex;align-items:center;justify-content:space-between;gap:8px}small{color:#cbb6a5}.cash{color:#ffcf67}canvas{display:block;width:100%;max-height:52svh;object-fit:contain;background:#211a28;image-rendering:pixelated;border:3px solid #634958;touch-action:manipulation;outline-offset:3px}.row{margin:9px 0}.bar{width:74px;height:8px;background:#47313d;display:inline-block;margin-left:5px}.bar i{height:100%;display:block;background:#ed9967}.panel{background:#302332;padding:8px 10px;border:1px solid #624653;margin-top:8px}.buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}button{min-height:43px;background:#523541;color:#fff0d1;border:1px solid #926252;font:inherit;touch-action:manipulation;padding:4px}button:active{background:#815441}button:disabled{opacity:.52}#next{width:100%;margin-top:8px;background:#805335}#note{min-height:1.5em;margin:5px 0;color:#f9c58a}#bag{min-height:1.3em;margin-bottom:6px}
 canvas{touch-action:none;width:100%;height:clamp(210px,48svh,480px);max-height:none;object-fit:fill}#swing{width:100%;margin-top:6px;min-height:50px;background:#805335;touch-action:none}#swing:active{background:#af744a}
-.map{position:relative}.map-tools{position:absolute;top:10px;right:10px;display:flex;gap:5px}.map-tools button{padding:0 12px;background:#292633ed;border:1px solid #b78b61}#gear{position:fixed;inset:0;margin:auto;width:min(calc(100% - 24px),420px);max-height:85dvh;overflow:auto;color:#fff0d1;background:#302332;border:2px solid #b78b61;padding:14px}#gear::backdrop{background:#16101bd9}#gear h2{margin:0;font-size:19px}#gear h3{font-size:13px;margin:15px 0 0;color:#d5b79c}#gear-close{padding:0 12px}#slots,#shop{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}#shop button small{display:block}#slots button small{display:block}#slots [aria-pressed=true]{border-color:#ffcd83}#equipment-note{margin:8px 0 0;color:#ffd585;min-height:1.2em}.paperdoll{display:grid;grid-template-columns:1fr 105px 1fr;gap:8px;align-items:center;margin-top:12px;background:#241e2b;padding:8px;border:1px solid #765363}#avatar{grid-column:2;grid-row:1/4;width:100%;height:auto;aspect-ratio:1;max-height:none;border:1px solid #89645d;background:#342a3a}#slots{display:contents}#slots button:nth-child(odd){grid-column:1}#slots button:nth-child(even){grid-column:3}#slots button:nth-child(-n+2){grid-row:1}#slots button:nth-child(n+3):nth-child(-n+4){grid-row:2}#slots button:nth-child(n+5){grid-row:3}.item-icon{vertical-align:middle;width:20px;height:20px;image-rendering:pixelated;margin-right:4px}#reserve{margin:6px 0;color:#e5bb94}#reserve label{display:inline-block;margin:3px 8px 3px 0}#progress{height:5px;background:#47313d;margin:-3px 0 7px}#progress i{display:block;height:100%;background:#88d0bd}#smith{width:min(calc(100% - 30px),330px);padding:12px;background:#302332;color:#fff0d1;border:2px solid #b78b61;text-align:center}#smith::backdrop{background:#151019cf}#smith h2{margin:0 0 8px}#smith-scene{height:auto;max-height:none}#smith-result{min-height:1.4em}#rewards{width:min(calc(100% - 30px),350px);background:#342636;color:#fff0d1;border:2px solid #b78b61;padding:14px}#rewards::backdrop{background:#19131cd9}#rewards h2{margin:0 0 10px}#reward-options{display:grid;gap:7px}#reward-options button{text-align:left;padding:8px}#reward-options small{display:block}#chest-open{position:absolute;bottom:10px;left:10px;background:#704636;padding:0 12px}#chest-art{height:auto;max-height:none}#reward-open{color:#ffe597}[hidden]{display:none!important}.crew{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}.crew button{padding:5px}.crew button[aria-pressed=true]{border-color:#ffcd83}.crew small{display:block;color:#d7b894}.item-icon{width:26px;height:26px}.vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:5px 0 8px}.vitals div{background:linear-gradient(90deg,#4b404f var(--value),#2b2330 var(--value));padding:4px 6px;border:1px solid #5f4959;font-size:12px}.clock-row{display:flex;justify-content:space-between;align-items:center;margin:6px 0}.clock-row button{min-height:36px;padding:0 10px}#offline-report,#day-summary{width:min(calc(100% - 32px),340px);background:#342937;color:#fff0d1;border:2px solid #b78b61;padding:14px}#offline-report::backdrop,#day-summary::backdrop{background:#17101cd9}#day-summary h2{margin:0 0 8px}#day-summary p{line-height:1.55}#day-summary[data-faint=true][open]{animation:rescue-in .65s ease-out}@keyframes rescue-in{0%{opacity:0;transform:translateY(10px) rotate(-2deg)}100%{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){#day-summary[data-faint=true][open]{animation:none}}#quests{width:min(calc(100% - 24px),400px);max-height:84dvh;overflow:auto;color:#fff0d1;background:#302332;border:2px solid #b78b61;padding:14px}#quests::backdrop{background:#16101bd9}#quests h2{margin:0}.quest-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:10px 0}.quest-tabs [aria-pressed=true]{border-color:#ffcd83}#quest-list section{padding:8px;border-top:1px solid #73525d}#quest-list small{display:block;margin:3px 0 5px}#quest-list button{margin-right:5px}#quest-tracking:not(:empty){display:block;margin:4px 0;color:#ffe1ac}#day-scene{height:auto;max-height:none;margin-top:8px;background:#251d28}.gear-grade{border-color:var(--grade,#926252)}#set-summary{color:#e3c3a3}</style>
+.map{position:relative}.map-tools{position:absolute;top:10px;right:10px;display:flex;gap:5px}.map-tools button{padding:0 12px;background:#292633ed;border:1px solid #b78b61}#gear{position:fixed;inset:0;margin:auto;width:min(calc(100% - 24px),420px);max-height:85dvh;overflow:auto;color:#fff0d1;background:#302332;border:2px solid #b78b61;padding:14px}#gear::backdrop{background:#16101bd9}#gear h2{margin:0;font-size:19px}#gear h3{font-size:13px;margin:15px 0 0;color:#d5b79c}#gear-close{padding:0 12px}#slots,#shop{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}#shop button small{display:block}#slots button small{display:block}#slots [aria-pressed=true]{border-color:#ffcd83}#equipment-note{margin:8px 0 0;color:#ffd585;min-height:1.2em}.paperdoll{display:grid;grid-template-columns:1fr 105px 1fr;gap:8px;align-items:center;margin-top:12px;background:#241e2b;padding:8px;border:1px solid #765363}#avatar{grid-column:2;grid-row:1/4;width:100%;height:auto;aspect-ratio:1;max-height:none;border:1px solid #89645d;background:#342a3a}#slots{display:contents}#slots button:nth-child(odd){grid-column:1}#slots button:nth-child(even){grid-column:3}#slots button:nth-child(-n+2){grid-row:1}#slots button:nth-child(n+3):nth-child(-n+4){grid-row:2}#slots button:nth-child(n+5){grid-row:3}.item-icon{vertical-align:middle;width:20px;height:20px;image-rendering:pixelated;margin-right:4px}#reserve{margin:6px 0;color:#e5bb94}#reserve label{display:inline-block;margin:3px 8px 3px 0}#progress{height:5px;background:#47313d;margin:-3px 0 7px}#progress i{display:block;height:100%;background:#88d0bd}#smith{width:min(calc(100% - 30px),330px);padding:12px;background:#302332;color:#fff0d1;border:2px solid #b78b61;text-align:center}#smith::backdrop{background:#151019cf}#smith h2{margin:0 0 8px}#smith-scene{height:auto;max-height:none}#smith-result{min-height:1.4em}#rewards{width:min(calc(100% - 30px),350px);background:#342636;color:#fff0d1;border:2px solid #b78b61;padding:14px}#rewards::backdrop{background:#19131cd9}#rewards h2{margin:0 0 10px}#reward-options{display:grid;gap:7px}#reward-options button{text-align:left;padding:8px}#reward-options small{display:block}#chest-open{position:absolute;bottom:10px;left:10px;background:#704636;padding:0 12px}#chest-art{height:auto;max-height:none}#reward-open{color:#ffe597}[hidden]{display:none!important}.crew{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0}.crew button{padding:5px}.crew button[aria-pressed=true]{border-color:#ffcd83}.crew small{display:block;color:#d7b894}.item-icon{width:26px;height:26px}.vitals{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:5px 0 8px}.vitals div{background:linear-gradient(90deg,#4b404f var(--value),#2b2330 var(--value));padding:4px 6px;border:1px solid #5f4959;font-size:12px}.clock-row{display:flex;justify-content:space-between;align-items:center;margin:6px 0}.clock-row button{min-height:36px;padding:0 10px}#offline-report,#day-summary{width:min(calc(100% - 32px),340px);background:#342937;color:#fff0d1;border:2px solid #b78b61;padding:14px}#offline-report::backdrop,#day-summary::backdrop{background:#17101cd9}#day-summary h2{margin:0 0 8px}#day-summary p{line-height:1.55}#day-summary[data-faint=true][open]{animation:rescue-in .65s ease-out}@keyframes rescue-in{0%{opacity:0;transform:translateY(10px) rotate(-2deg)}100%{opacity:1;transform:none}}@media(prefers-reduced-motion:reduce){#day-summary[data-faint=true][open]{animation:none}}#lodging,#dining,#lift,#quests{width:min(calc(100% - 24px),400px);max-height:84dvh;overflow:auto;color:#fff0d1;background:#302332;border:2px solid #b78b61;padding:14px}#lodging::backdrop,#dining::backdrop,#lift::backdrop,#quests::backdrop{background:#16101bd9}#quests h2{margin:0}.quest-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:10px 0}.quest-tabs [aria-pressed=true]{border-color:#ffcd83}#quest-list section{padding:8px;border-top:1px solid #73525d}#quest-list small{display:block;margin:3px 0 5px}#quest-list button{margin-right:5px}#quest-tracking:not(:empty){display:block;margin:4px 0;color:#ffe1ac}#day-scene{height:auto;max-height:none;margin-top:8px;background:#251d28}.gear-grade{border-color:var(--grade,#926252)}#set-summary{color:#e3c3a3}#lift h2{margin:0;font-size:18px}#lift-art{height:auto;max-height:none;margin-top:8px}#lift-floors{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.map-tools button{padding:0 7px}.inventory-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:8px 0}.inventory-tabs [aria-pressed=true]{border-color:#edb87c;background:#674349}.item-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin:8px 0}.item-grid button{display:grid;place-items:center;min-height:58px;padding:3px}.item-grid .item-icon{margin:0;border:0;background:#382b3a}.item-grid small{font-size:10px}.item-grid [aria-pressed=true]{outline:1px solid #f1c48c}#item-detail{display:grid;grid-template-columns:56px 1fr;gap:9px;background:#261e2b;padding:8px;margin-top:8px;border:1px solid #794f62}#item-picture{width:56px;height:56px;object-fit:contain}#item-copy{margin:4px 0;color:#e4caac;font-size:12px}#dining-art,#lodging-art{height:auto;max-height:none;margin:9px 0}#dining h2,#lodging h2{margin:0;font-size:18px}#dining .buttons small{display:block;font-size:11px}#dining-open{width:100%;margin-top:8px}</style>
 <main><header><div><small>자유 채굴</small><h1>광맥 브레이커</h1></div><strong class="cash" id="cash"></strong></header>
-<div class="clock-row"><strong id="clock"></strong><button id="sleep">숙소에서 취침</button></div><div class="row"><span id="floor"></span></div><div class="vitals"><div><span id="hp"></span></div><div><span id="sp"></span></div><div><span id="food"></span></div></div>
-<small id="quest-tracking"></small><div id="progress" role="progressbar" aria-label="다음 광부 레벨"><i></i></div><div class="map"><canvas id="mine" width="448" height="504" aria-label="광산. 화면을 밀어서 이동하세요"></canvas><div class="map-tools"><button id="quest-open">수첩</button><button id="reward-open" hidden>레벨 보상</button><button id="gear-open" aria-haspopup="dialog">인벤토리</button></div><button id="chest-open" hidden>보물상자 열기</button></div><button id="swing">곡괭이 휘두르기 ⛏</button><p id="note" role="status">화면을 밀어 이동하고 곡괭이를 눌러요.</p>
+<div class="clock-row"><strong id="clock"></strong><button id="lodging-open">숙소</button></div><div class="row"><span id="floor"></span></div><div class="vitals"><div><span id="hp"></span></div><div><span id="sp"></span></div><div><span id="food"></span></div></div>
+<small id="quest-tracking"></small><div id="progress" role="progressbar" aria-label="다음 광부 레벨"><i></i></div><div class="map"><canvas id="mine" width="448" height="504" aria-label="광산. 화면을 밀어서 이동하세요"></canvas><div class="map-tools"><button id="lift-open">승강기</button><button id="quest-open">수첩</button><button id="reward-open" hidden>레벨 보상</button><button id="gear-open" aria-haspopup="dialog">인벤토리</button></div><button id="chest-open" hidden>보물상자 열기</button></div><button id="swing">곡괭이 휘두르기 ⛏</button><p id="note" role="status">화면을 밀어 이동하고 곡괭이를 눌러요.</p>
 <section class="panel" aria-label="광석 거래소"><div id="bag"></div><div class="buttons"><button id="sell">광석 팔기</button><button id="drill">자동 드릴 · Lv. 5 / 120G</button><button id="drill-upgrade" hidden></button></div></section>
-<section class="panel" aria-label="광부식당"><small>광부식당</small><div class="buttons"><button id="meal">광부백반 · 첫 끼 무료</button><button id="spicy">제육 든든밥 · 9G</button><button id="stew">버섯 스튜 · 15G</button><button id="special">광부 특식 · 30G</button></div></section>
+<button id="dining-open">광부식당</button>
 <dialog id="gear" aria-labelledby="gear-title"><header><h2 id="gear-title">인벤토리</h2><button id="gear-close">닫기</button></header>
-<div class="paperdoll"><canvas id="avatar" width="104" height="104" aria-label="착용 중인 광부 모습"></canvas><div id="slots" aria-label="장비 슬롯"></div></div><p id="equipment-note" role="status"></p>
-<label><input type="checkbox" id="hit-shake"> 타격 흔들림</label><h3>광부 외형</h3><div class="crew"><button id="crew-male">기본 광부</button><button id="crew-female">루치아 미리보기</button><button id="crew-action" hidden></button></div><h3>장비 상점과 보유 장비</h3><div id="shop" aria-label="장비 상점과 보유 장비"></div><h3>대장간</h3><small>강철 곡괭이 보유 시 보석 곡괭이를 재련할 수 있어요.</small><div id="reserve"></div><div class="buttons" id="forge"></div><h3>세트 제작</h3><p id="set-summary"></p><div class="buttons" id="set-forge"></div></dialog><dialog id="smith" aria-labelledby="smith-title"><h2 id="smith-title">대장간</h2><canvas id="smith-scene" width="128" height="78" aria-hidden="true"></canvas><p id="smith-result" role="status"></p><button id="smith-close">확인</button></dialog><dialog id="rewards" aria-labelledby="reward-title"><h2 id="reward-title"></h2><canvas id="chest-art" width="112" height="58" aria-hidden="true" hidden></canvas><p id="reward-copy" role="status"></p><div id="reward-options"></div><button id="reward-close">닫기</button></dialog><dialog id="day-summary" aria-labelledby="day-title"><h2 id="day-title"></h2><canvas id="day-scene" width="144" height="76" aria-hidden="true"></canvas><p id="day-copy"></p><p id="day-stats"></p><p id="day-next"></p><button id="day-dismiss">오전 6시에 시작</button></dialog><dialog id="quests" aria-labelledby="quest-title"><header><h2 id="quest-title">광부 수첩</h2><button id="quest-close">닫기</button></header><div class="quest-tabs"><button id="quest-main">메인</button><button id="quest-daily">일일</button><button id="quest-contracts">반복</button></div><p id="quest-purse"></p><div id="quest-list"></div></dialog><dialog id="offline-report" aria-labelledby="offline-title"><h2 id="offline-title">드릴 복귀 정산</h2><p id="offline-copy"></p><button id="offline-dismiss">확인</button></dialog></main>
+<nav class="inventory-tabs" aria-label="인벤토리 분류"><button id="inventory-outfit">착용</button><button id="inventory-bag">가방</button><button id="inventory-store">상점·제작</button></nav><div id="outfit-pane"><div class="paperdoll"><canvas id="avatar" width="104" height="104" aria-label="착용 중인 광부 모습"></canvas><div id="slots" aria-label="장비 슬롯"></div></div><p id="equipment-note" role="status"></p><div id="owned-grid" class="item-grid"></div>
+<label><input type="checkbox" id="hit-shake"> 타격 흔들림</label><h3>광부 외형</h3><div class="crew"><button id="crew-male">기본 광부</button><button id="crew-female">루치아 미리보기</button><button id="crew-action" hidden></button></div></div><div id="bag-pane" hidden><div id="bag-grid" class="item-grid"></div></div><div id="store-pane" hidden><h3>장비 상점</h3><div id="shop" aria-label="장비 상점과 보유 장비"></div><h3>대장간</h3><small>강철 곡괭이 보유 시 보석 곡괭이를 재련할 수 있어요.</small><div id="reserve"></div><div class="buttons" id="forge"></div><h3>세트 제작</h3><p id="set-summary"></p><div class="buttons" id="set-forge"></div></div><section id="item-detail" hidden><canvas id="item-picture" width="32" height="32" aria-hidden="true"></canvas><div><strong id="item-name"></strong><p id="item-copy"></p><div id="item-actions" class="buttons"></div></div></section></dialog><dialog id="smith" aria-labelledby="smith-title"><h2 id="smith-title">대장간</h2><canvas id="smith-scene" width="128" height="78" aria-hidden="true"></canvas><p id="smith-result" role="status"></p><button id="smith-close">확인</button></dialog><dialog id="rewards" aria-labelledby="reward-title"><h2 id="reward-title"></h2><canvas id="chest-art" width="112" height="58" aria-hidden="true" hidden></canvas><p id="reward-copy" role="status"></p><div id="reward-options"></div><button id="reward-close">닫기</button></dialog><dialog id="day-summary" aria-labelledby="day-title"><h2 id="day-title"></h2><canvas id="day-scene" width="144" height="76" aria-hidden="true"></canvas><p id="day-copy"></p><p id="day-stats"></p><p id="day-next"></p><button id="day-dismiss">오전 6시에 시작</button></dialog><dialog id="quests" aria-labelledby="quest-title"><header><h2 id="quest-title">광부 수첩</h2><button id="quest-close">닫기</button></header><div class="quest-tabs"><button id="quest-main">메인</button><button id="quest-daily">일일</button><button id="quest-contracts">반복</button></div><p id="quest-purse"></p><div id="quest-list"></div></dialog><dialog id="offline-report" aria-labelledby="offline-title"><h2 id="offline-title">드릴 복귀 정산</h2><p id="offline-copy"></p><button id="offline-dismiss">확인</button></dialog><dialog id="lift" aria-labelledby="lift-title"><header><h2 id="lift-title"></h2><button id="lift-close">닫기</button></header><canvas id="lift-art" width="128" height="63" aria-hidden="true"></canvas><p id="lift-note"></p><div id="lift-floors"></div></dialog><dialog id="dining" aria-labelledby="dining-title"><header><h2 id="dining-title">광부식당</h2><button id="dining-close">닫기</button></header><canvas id="dining-art" width="144" height="76" aria-hidden="true"></canvas><div class="buttons"><button id="meal">광부백반 · 첫 끼 무료</button><button id="spicy">제육 든든밥 · 9G</button><button id="stew">버섯 스튜 · 15G</button><button id="special">광부 특식 · 30G</button></div></dialog><dialog id="lodging" aria-labelledby="lodging-title"><header><h2 id="lodging-title">광부 숙소</h2><button id="lodging-close">닫기</button></header><canvas id="lodging-art" width="144" height="76" aria-hidden="true"></canvas><p>취침하면 하루를 정산하고 체력과 기력을 회복해요.</p><button id="sleep">오늘 채굴 마치고 취침</button></dialog></main>
 <script>
 const el=id=>document.getElementById(id);
 const view=el('mine'), g=view.getContext('2d');
@@ -191,6 +191,7 @@ function spendStamina(){
 }
 function record(key,amount=1){life.totals[key]+=amount}
 function eat(id){
+ if(mealScene)return;
  const food=meals[id], price=id==='meal'&&freeMeal?0:food.price;
  if(cash<price)return;
  cash-=price;
@@ -200,6 +201,7 @@ function eat(id){
  life.hp=Math.min(hpCap(),life.hp+(food.hp??0));
  if(food.boost)life.boostUntil=life.minute+dayRules.specialDuration;
  if(id==='spicy')spicy=true;
+ if(el('dining').open){mealScene={id,age:0};drawDining()}
  questEvent('meal');note(food.name+'을 먹었어요.');update();save();
 }
 function advanceOfflineClock(seconds){
@@ -228,8 +230,8 @@ function updateLife(){
   el(id).parentNode.style.setProperty('--value',Math.ceil(life[id])+'%');
  }
  for(const [id,food] of Object.entries(meals)){
-  el(id).disabled=cash<food.price&&!(id==='meal'&&freeMeal);
-  if(id==='meal')el(id).textContent=freeMeal?'광부백반 · 첫 끼 무료':'광부백반 · 5G';
+  el(id).disabled=Boolean(mealScene)||(cash<food.price&&!(id==='meal'&&freeMeal));
+  mealTitles[id].textContent=food.name+' · '+(id==='meal'&&freeMeal?'첫 끼 무료':food.price+'G');
  }
 }
 function showDaySummary(){
@@ -260,8 +262,8 @@ function endDay(faint){
  life.boostUntil=0;life.totals=freshTotals();
  Object.assign(player,{x:750,y:750,walk:0});camera=null;
  pauseInput();cooldown=0;swing=0;wave=null;combo=null;
- for(const id of ['smith','rewards','gear','quests','offline-report'])if(el(id).open)el(id).close();
- smith=null;chestScene=null;
+ for(const id of ['smith','rewards','gear','quests','offline-report','lift','dining','lodging'])if(el(id).open)el(id).close();
+ smith=null;chestScene=null;liftRide=null;mealScene=null;
  save();update();showDaySummary();
 }
 function tickLife(seconds){
@@ -294,6 +296,59 @@ function drawDayScene(){
   p(15,11,26,23,'#ffbd76');ctx.restore();
  }
 }
+const foodColors={meal:['#f0dfb2','#e8b45e','#bd7761'],spicy:['#e28052','#ba493c','#f2be60'],stew:['#b78055','#ddb98a','#ad795e'],special:['#ffda7d','#d47e53','#92ba83']};
+let mealScene=null;
+function foodIcon(ctx,x,y,id,scale=1){
+ const [base,light,season]=foodColors[id], p=(a,b,w,h,c)=>pixel(ctx,x+a*scale,y+b*scale,w*scale,h*scale,c);
+ p(-6,-2,12,5,'#3e2938');p(-5,1,10,4,'#80565a');p(-4,4,8,1,'#b48572');
+ p(-5,-3,10,4,base);p(-4,-4,8,2,base);p(-2,-4,3,2,light);p(1,-2,3,2,season);
+ p(-4,-2,2,1,season);p(3,1,2,1,'#f8dca2');
+}
+function roomBackground(ctx,windowColor){
+ const p=(...args)=>pixel(ctx,...args);
+ p(0,0,144,76,'#3a2c3c');p(0,47,144,29,'#6e4946');
+ for(let x=-10;x<144;x+=19){p(x,49,1,27,'#543943');p(x+2,51,11,1,'#895852')}
+ for(let y=8;y<48;y+=12)p(0,y,144,1,'#4e3641');
+ p(16,8,30,26,'#755348');p(19,11,24,20,windowColor);p(30,11,2,20,'#9a7157');p(19,20,24,1,'#9a7157');
+ p(103,21,17,21,'#543a43');p(104,21,18,3,'#896052');p(108,27,9,1,'#af795c');
+ p(106,43,4,4,'#4a313c');p(116,43,4,4,'#4a313c');
+}
+function drawDining(){
+ const ctx=el('dining-art').getContext('2d');
+ roomBackground(ctx,'#c5826c');
+ const p=(...args)=>pixel(ctx,...args);
+ const bite=mealScene&&mealScene.age<.7?Math.floor(mealScene.age*8)%2:0;
+ drawMiner(ctx,51,44+bite,1,0,0,character,{rest:true});
+ p(65,40,53,6,'#a67755');p(65,45,53,4,'#69444a');p(70,49,3,13,'#543543');p(111,49,3,13,'#543543');
+ foodIcon(ctx,83,39,mealScene?.id??'meal');
+ if(mealScene&&bite){foodIcon(ctx,61,31,mealScene.id,.32);p(55,33,4,2,'#e9ad80')}
+ for(let i=0;i<3;i++){
+  const t=mealScene?.age??0; p(79+i*3,31-Math.floor(t*10+i)%5,1,2,'#ffe1ac6e');
+ }
+}
+function drawLodging(){
+ const ctx=el('lodging-art').getContext('2d');roomBackground(ctx,'#575c80');
+ const p=(...args)=>pixel(ctx,...args);
+ p(70,33,48,27,'#583e4a');p(72,32,45,18,'#84947d');p(74,35,14,12,'#dec3a4');
+ p(90,33,25,16,'#a76669');p(93,37,20,2,'#d5887f');p(73,50,43,4,'#9b6e56');
+ p(73,54,4,8,'#603f49');p(112,54,4,8,'#603f49');
+ drawMiner(ctx,52,47,1,0,0,character,{rest:true});
+}
+function bindRooms(){
+ el('dining-open').onclick=()=>{pauseInput();drawDining();el('dining').showModal()};
+ el('dining-close').onclick=()=>{if(!mealScene)el('dining').close()};
+ el('dining').addEventListener('cancel',event=>{if(mealScene)event.preventDefault()});
+ el('lodging-open').onclick=()=>{pauseInput();drawLodging();el('lodging').showModal()};
+ el('lodging-close').onclick=()=>el('lodging').close();
+ const effects={meal:'포만감 +40 · 기력 +15',spicy:'포만감 +60 · 기력 +25',stew:'포만감 +45 · 체력 +20',special:'포만감 +80 · 3시간 채굴 속도 +10%'};
+ for(const id of Object.keys(meals)){
+  const icon=makeIcon();foodIcon(icon.getContext('2d'),16,16,id,2);
+  const title=document.createElement('span'), help=document.createElement('small');help.textContent=effects[id];
+  el(id).replaceChildren(icon,title,help);mealTitles[id]=title;
+ }
+}
+const mealTitles={};
+
 function bindLife(){
  for(const id of Object.keys(meals))el(id).onclick=()=>eat(id);
  el('sleep').onclick=()=>endDay(false);
@@ -531,6 +586,140 @@ function collectGem(gem){
  if(wearing('magnet'))magnetCharge++;
 }
 
+const zones=[
+ {name:'구리 갱도',floor:['#302b36','#352e38','#39313a','#322c38'],pool:[[8,44],[0,22],[1,26],[2,7],[3,1]],rare:3,efficient:[0,1]},
+ {name:'수정 동굴',floor:['#2b2d43','#32344c','#343951','#292c42'],pool:[[8,26],[0,6],[1,8],[2,20],[3,17],[4,7],[5,12],[6,3],[9,1]],rare:6,efficient:[2,3,5]},
+ {name:'흑요 심층',floor:['#352834','#392a38','#443041','#352734'],pool:[[8,14],[1,6],[2,8],[4,15],[5,8],[6,11],[7,12],[10,22],[11,4]],rare:11,efficient:[4,7,10]}
+];
+const floorLimit=30, floorMineTarget=12, regenMs=6*60*1000;
+let depth=1,deepest=1,floorMined=0,floorStates={},liftRide=null;
+function mineZone(floor=depth){return zones[Math.min(zones.length-1,Math.floor((floor-1)/10))]}
+function openFloorLimit(){return Math.min(floorLimit,(bossWins+1)*10)}
+function atLift(){return dist(player,{x:750,y:750})<49}
+function floorRandom(floor){
+ let seed=(floor*26947+30391)>>>0;
+ return ()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
+}
+function zoneOre(zone,random){
+ let ticket=random()*100;
+ for(const [type,weight] of zone.pool){ticket-=weight;if(ticket<0)return type}
+ return 8;
+}
+function generateFloor(floor){
+ const zone=mineZone(floor), random=floorRandom(floor);
+ const map=[];
+ for(let gy=-6;gy<=6;gy++)for(let gx=-6;gx<=6;gx++){
+  if(!gx&&!gy)continue;
+  const x=750+gx*88+Math.floor(random()*12),y=750+gy*88+Math.floor(random()*12);
+  const type=zoneOre(zone,random),size=3+Math.floor(random()*4);
+  for(let i=0;i<size;i++){
+   const ore=random()<.68?type:zoneOre(zone,random);
+   const visible=unlock[ore]<=level()?ore:8;
+   map.push({x:x+i%3*13,y:y+Math.floor(i/3)*13,type:visible,hp:ores[visible][2],...(visible===ore?{}:{reveal:ore})});
+  }
+ }
+ for(const [x,y] of [[824,780],[702,679],[920,748]]){
+  const type=zone.rare;
+  for(let i=0;i<3;i++){
+   const visible=unlock[type]<=level()?type:8;
+   map.push({x:x+i*13,y,type:visible,hp:ores[visible][2],...(visible===type?{}:{reveal:type})});
+  }
+ }
+ return map;
+}
+function allFloorChests(){
+ return chests.filter(chest=>(chest.floor??1)===depth).concat(depth===1?hiddenChests:[]);
+}
+function floorBossReady(){
+ return !boss&&stage()===(bossWins+1)*10&&(depth===(bossWins+1)*10||(bossWins+1)*10>floorLimit&&depth===floorLimit);
+}
+function spawnFloorBoss(){
+ if(!floorBossReady())return false;
+ boss=makeBoss();combo={x:boss.x,y:boss.y,text:'BOSS',age:0};
+ note('Stage '+stage()+' · '+bossSpec().name+' 등장!');
+ return true;
+}
+function travelledBefore(floor){return floor>=1&&floor<=deepest}
+function canDiscoverFloor(){
+ return depth===deepest&&depth<openFloorLimit()&&floorMined>=floorMineTarget;
+}
+function canTravel(floor){
+ if(!atLift()||!Number.isInteger(floor)||floor===depth||floor<1||floor>openFloorLimit())return false;
+ return travelledBefore(floor)||(floor===depth+1&&canDiscoverFloor());
+}
+function currentQuestFloor(){
+ if(!quests.main.stage5)return 5;
+ if(!quests.main.guardian)return 10;
+ if(!quests.main.stage20||!quests.main.secret)return 20;
+ return Math.min(floorLimit,(bossWins+1)*10);
+}
+function drawLiftMenu(){
+ const list=el('lift-floors');list.replaceChildren();
+ el('lift-title').textContent='도르레 승강기 · '+depth+'층';
+ el('lift-note').textContent='의뢰 목적지 '+currentQuestFloor()+'층 · 다음 층까지 이 층에서 '+Math.max(0,floorMineTarget-floorMined)+'개';
+ el('lift-art').hidden=false;el('lift-close').disabled=Boolean(liftRide);
+ const top=Math.min(openFloorLimit(),deepest+1);
+ for(let floor=1;floor<=top;floor++){
+  const button=document.createElement('button');
+  button.textContent=floor+'층'+(floor===depth?' · 현재':floor===currentQuestFloor()?' · 의뢰':floor%10===0?' · 정거장':'');
+  button.disabled=!canTravel(floor)||Boolean(liftRide);
+  button.onclick=()=>startLift(floor);list.append(button);
+ }
+ drawLift(0);
+}
+function startLift(floor){
+ if(liftRide||!canTravel(floor))return;
+ pauseInput();liftRide={floor,age:0};
+ drawLiftMenu();el('lift-note').textContent=floor+'층으로 이동 중';
+}
+function arriveFloor(floor){
+ if(!canTravel(floor))return false;
+ floorStates[depth]={rocks,loot,boss,mined:floorMined,day:life.day,leftAt:Math.max(wallTime,Date.now())};
+ const saved=floorStates[floor], reborn=saved&&life.day>saved.day&&Date.now()-saved.leftAt>=regenMs;
+ depth=floor;deepest=Math.max(deepest,floor);
+ rocks=saved&&!reborn?saved.rocks:generateFloor(floor);
+ loot=saved?.loot??[];boss=saved?.boss??null;floorMined=saved?.mined??0;
+ delete floorStates[floor];
+ Object.assign(player,{x:750,y:750,walk:0});camera=null;
+ wave=null;combo=null;dust=[];echoes=[];skillFx=[];bossImpact=null;bossVictory=null;
+ exposeVeins();spawnFloorBoss();
+ save();update();
+ if(!boss)note(depth+'층 · '+mineZone().name+(reborn?' · 광맥이 다시 자랐어요.':''));
+ return true;
+}
+function drawLift(age){
+ const ctx=el('lift-art').getContext('2d'), p=(...args)=>pixel(ctx,...args);
+ p(0,0,128,63,'#241c2c');p(22,4,84,55,'#332637');p(32,4,64,55,'#46303d');
+ p(33,4,4,55,'#8b6352');p(91,4,4,55,'#8b6352');
+ const offset=Math.round(Math.sin(age*Math.PI)*12);
+ for(let y=6;y<56;y+=6){p(63,y+(offset%6),3,4,'#bf9a77');p(64,y+2+(offset%6),1,3,'#695767')}
+ ctx.beginPath();ctx.fillStyle='#b28967';ctx.arc(64,9,6,0,Math.PI*2);ctx.fill();
+ ctx.beginPath();ctx.strokeStyle='#554052';ctx.moveTo(64,9);ctx.lineTo(64+Math.cos(age*22)*5,9+Math.sin(age*22)*5);ctx.stroke();
+ const y=38+offset;
+ p(43,y,42,15,'#362633');p(45,y,38,13,'#846255');p(48,y+1,32,9,'#503a46');
+ p(43,y+11,42,3,'#bf946b');p(50,y,2,12,'#b89070');p(75,y,2,12,'#b89070');
+}
+function tickLift(dt){
+ if(!liftRide)return;
+ liftRide.age+=dt;drawLift(Math.min(1,liftRide.age/.8));
+ if(liftRide.age<.8)return;
+ const floor=liftRide.floor;liftRide=null;
+ arriveFloor(floor);drawLiftMenu();
+}
+function bindLift(){
+ el('lift-open').onclick=()=>{
+  if(!atLift()){note('입구로 돌아가면 승강기를 탈 수 있어요.');return}
+  pauseInput();drawLiftMenu();el('lift').showModal();
+ };
+ el('lift-close').onclick=()=>{if(!liftRide)el('lift').close()};
+ el('lift').addEventListener('cancel',event=>{if(liftRide)event.preventDefault()});
+}
+function drawLiftEntrance(){
+ drawRect(735,725,31,5,'#6e514d');drawRect(735,729,3,18,'#96705c');drawRect(763,729,3,18,'#96705c');
+ drawRect(739,740,23,6,'#866052');drawRect(738,746,25,2,'#bf966e');
+ for(let i=0;i<4;i++)drawRect(749,729+i*3,2,2,'#c3a482');
+}
+
 let drillTier=1, idleCarry=0, offlineSerial=0, offlineReport=null, wallTime=0, rockFinds=0;
 try{
  const data=JSON.parse(localStorage.getItem(key));
@@ -547,6 +736,7 @@ try{
   bag=ores.map((_,index)=>data.bag[index]??0);
   claims=data.claims??[];rank=data.rank??{};chests=data.chests??[];opened=data.opened??[];
   xp=data.xp??0;mined=data.mined??0;bossWins=data.bossWins??0;boss=data.boss??null;
+  depth=data.depth??1;deepest=data.deepest??1;floorStates=data.floorStates??{};floorMined=data.floorMined??Math.min(floorMineTarget,mined);
   drillTier=data.drillTier??1;idleCarry=data.idleCarry??0;offlineSerial=data.offlineSerial??0;offlineReport=data.offlineReport??null;
   drillRuns=data.drillRuns??0;strikeCount=data.strikeCount??0;rockFinds=data.rockFinds??0;gemRuns=data.gemRuns??0;
   wallTime=data.savedAt??Date.now();
@@ -565,7 +755,7 @@ try{
 }catch{}
 function save(){
  wallTime=Math.max(wallTime,Date.now());
- try{localStorage.setItem(key,JSON.stringify({player,rocks,loot,cash,life,quests,hitShake,drill,freeMeal,spicy,bag,best,owned,equipped,xp,mapVersion,reserves,character,luciaOwned,diamondSites:true,mined,bossWins,boss,claims,rank,chests,opened,drillTier,idleCarry,offlineSerial,offlineReport,drillRuns,strikeCount,rockFinds,gemRuns,savedAt:wallTime}))}catch{}
+ try{localStorage.setItem(key,JSON.stringify({player,rocks,loot,cash,life,quests,hitShake,drill,freeMeal,spicy,bag,best,owned,equipped,xp,mapVersion,reserves,character,luciaOwned,diamondSites:true,mined,bossWins,boss,claims,rank,chests,opened,depth,deepest,floorMined,floorStates,drillTier,idleCarry,offlineSerial,offlineReport,drillRuns,strikeCount,rockFinds,gemRuns,savedAt:wallTime}))}catch{}
 }
 function note(message){el('note').textContent=message}
 function gearNote(message){el('equipment-note').textContent=message}
@@ -764,11 +954,10 @@ for(const [slot,label] of Object.entries(slots)){
  el('slots').append(button);
  slotButtons[slot]={button,detail,icon};
  button.onclick=()=>{
-  const item=equipped[slot];
   if(slot.startsWith('ring'))ringSlot=slot;
-  if(item&&item!=='wood'){if(slot==='weapon')equipped.weapon='wood';else delete equipped[slot];life.hp=Math.min(life.hp,hpCap());gearNote(items[item].name+' 해제')}
-  else if(slot.startsWith('ring'))gearNote(label+' 선택. 보유한 반지를 눌러 착용하세요.');
-  save();updateGear();
+  const item=equipped[slot];
+  if(item){inventoryTab='outfit';selectedItem='gear:'+item;drawInventory();return}
+  gearNote(label+' 선택. 보유한 반지를 눌러 착용하세요.');updateGear();
  };
 }
 for(const [id,item] of Object.entries(items)){
@@ -776,7 +965,7 @@ for(const [id,item] of Object.entries(items)){
  detail.textContent=item.description;
  const icon=makeIcon();drawIcon(icon,id);button.append(icon,title,detail);
  el('shop').append(button);
- const grade=item.grade??(item.recipe?'전설':item.price>=90?'희귀':item.price?'고급':'일반');
+ const grade=itemGrade(item);
  button.style.setProperty('--grade',gradeColor[grade]);button.className='gear-grade';button.title=grade;
  shopButtons[id]={button,title,icon};
  if(item.recipe){
@@ -827,6 +1016,97 @@ el('crew-action').onclick=()=>{
  if(previewCharacter!=='female'&&previewCharacter!=='male')return;
  character=previewCharacter;gearNote(character==='female'?'루치아 선택':'기본 광부 선택');save();update();
 };
+function unequipSlot(slot){
+ const item=equipped[slot];if(!item||item==='wood')return;
+ if(slot==='weapon')equipped.weapon='wood';else delete equipped[slot];
+ if(slot.startsWith('ring'))ringSlot=slot;
+ life.hp=Math.min(life.hp,hpCap());
+ gearNote(items[item].name+' 해제');save();updateGear();
+}
+let inventoryTab='outfit',selectedItem=null;
+const inventoryTabs={outfit:'착용',bag:'가방',store:'상점·제작'};
+function paintBagIcon(icon,type){
+ const ctx=icon.getContext('2d');
+ ctx.clearRect(0,0,32,32);
+ if(type===null){
+  pixel(ctx,8,9,16,15,'#734e47');pixel(ctx,10,7,15,15,'#c6a17b');
+  pixel(ctx,12,11,9,1,'#6e4e54');pixel(ctx,12,15,10,1,'#6e4e54');return;
+ }
+ ctx.imageSmoothingEnabled=false;
+ if(artReady('ore'))ctx.drawImage(artImages.ore,type%4*48,Math.floor(type/4)*48,48,48,0,0,32,32);
+ else ctx.drawImage(rockSprite(type,0),0,0,32,32);
+}
+function inventoryRows(){
+ if(inventoryTab==='outfit')return owned.map(id=>({id,kind:'gear',name:items[id].name}));
+ return bag.flatMap((count,id)=>count?[{id,kind:'ore',name:ores[id][0],count}]:[])
+  .concat(Object.entries(quests.materials).filter(([,count])=>count>0).map(([id,count])=>({id,kind:'material',name:id,count})));
+}
+function inventoryDetail(entry){
+ const panel=el('item-detail'), title=el('item-name'), copy=el('item-copy'), actions=el('item-actions');
+ panel.hidden=!entry;if(!entry)return;
+ title.textContent=entry.name;actions.replaceChildren();
+ const icon=el('item-picture');
+ const action=(label,fn)=>{
+  const button=document.createElement('button');button.textContent=label;button.onclick=fn;actions.append(button);
+ };
+ if(entry.kind==='gear'){
+  const item=items[entry.id], grade=itemGrade(item);
+  drawIcon(icon,entry.id);
+  copy.textContent=grade+' · '+(item.slot==='ring'?'반지':slots[item.slot])+' · '+item.description+
+   (item.set?' · '+sets[item.set].name+' '+setCount(item.set)+'/4':'');
+  const inSlot=Object.keys(equipped).find(slot=>equipped[slot]===entry.id);
+  if(inSlot&&entry.id!=='wood')action('해제',()=>unequipSlot(inSlot));
+  if(!inSlot){
+   if(item.slot==='ring'){
+    for(const slot of ['ring1','ring2'])action(slots[slot]+' 장착',()=>{ringSlot=slot;shopButtons[entry.id].button.onclick()});
+   }else action('장착',()=>shopButtons[entry.id].button.onclick());
+  }
+ }else if(entry.kind==='ore'){
+  const type=entry.id, unit=ores[type][3];paintBagIcon(icon,type);
+  copy.textContent='보유 '+bag[type]+'개 · 개당 '+unit+'G'+(reserves[type]?' · 판매 보류 중':'');
+  action(reserves[type]?'보류 해제':'일괄 판매 보류',()=>{reserves[type]=!reserves[type];save();update()});
+  action('1개 판매',()=>{
+   if(bag[type]<1)return;
+   bag[type]--;cash+=unit;record('gold',unit);save();update();note(entry.name+' 판매 · +'+unit+'G');
+  });
+ }else{
+  paintBagIcon(icon,null);
+  copy.textContent='보유 '+entry.count+'개 · 의뢰 및 제작 재료';
+ }
+}
+function drawInventory(){
+ for(const tab of Object.keys(inventoryTabs)){
+  el('inventory-'+tab).setAttribute('aria-pressed',String(tab===inventoryTab));
+  el(tab+'-pane').hidden=tab!==inventoryTab;
+ }
+ const rows=inventoryTab==='store'?[]:inventoryRows();
+ const grid=el(inventoryTab==='bag'?'bag-grid':'owned-grid');
+ if(inventoryTab!=='store'){
+  grid.replaceChildren();
+  for(const entry of rows){
+   const button=document.createElement('button'), icon=makeIcon(), label=document.createElement('small');
+   const key=entry.kind+':'+entry.id;
+   button.setAttribute('aria-label',entry.name+(entry.count?' '+entry.count+'개':''));
+   button.setAttribute('aria-pressed',String(selectedItem===key));
+   button.className='gear-grade';
+   if(entry.kind==='gear'){
+    button.style.setProperty('--grade',gradeColor[itemGrade(items[entry.id])]);
+    drawIcon(icon,entry.id);
+   }else paintBagIcon(icon,entry.kind==='ore'?entry.id:null);
+   label.textContent=entry.kind==='gear'?entry.name:entry.count+'개';
+   button.append(icon,label);
+   button.onclick=()=>{selectedItem=key;drawInventory()};grid.append(button);
+  }
+ }
+ inventoryDetail(rows.find(entry=>entry.kind+':'+entry.id===selectedItem));
+}
+function itemGrade(item){return item.grade??(item.recipe?'전설':item.price>=90?'희귀':item.price?'고급':'일반')}
+function bindInventory(){
+ for(const tab of Object.keys(inventoryTabs))el('inventory-'+tab).onclick=()=>{
+  inventoryTab=tab;selectedItem=null;drawInventory();
+ };
+}
+
 function updateGear(){
  el('set-summary').textContent=Object.entries(sets).map(([id,set])=>{
   const count=setCount(id);
@@ -843,7 +1123,7 @@ function updateGear(){
  for(const [slot,{button,detail,icon}] of Object.entries(slotButtons)){
   detail.textContent=items[equipped[slot]]?.name??'비어 있음';
   drawIcon(icon,equipped[slot]);
-  button.disabled=equipped[slot]==='wood'||(!equipped[slot]&&!slot.startsWith('ring'));
+  button.disabled=!equipped[slot]&&!slot.startsWith('ring');
   if(slot.startsWith('ring'))button.setAttribute('aria-pressed',String(slot===ringSlot));
  }
  for(const [id,{button,title}] of Object.entries(shopButtons)){
@@ -858,6 +1138,7 @@ function updateGear(){
  el('reserve').setAttribute('title','재련에는 강철 곡괭이가 필요해요');
  const avatar=el('avatar').getContext('2d');
  if(avatar){avatar.setTransform(2,0,0,2,0,0);avatar.clearRect(0,0,52,52);avatar.fillStyle='#312a38';avatar.fillRect(0,0,52,52);avatar.fillStyle='#3d313d';avatar.fillRect(4,4,44,44);avatar.translate(22,36);avatar.scale(1.18,1.18);drawMiner(avatar,0,0,1,0,0,look)}
+ drawInventory();
 }
 el('gear-open').onclick=()=>{
  holding=false;stick=null;keys.clear();previewCharacter=character;updateGear();el('gear').showModal();
@@ -877,11 +1158,11 @@ function update(){
  el('reward-open').hidden=!pendingReward();
  el('chest-open').hidden=!nearChest();
  const next=thresholds[current], start=thresholds[current-1];
- el('floor').textContent='Lv. '+current+' · Stage '+stage()+' · '+(next?(xp-start)+' / '+(next-start)+' XP':xp+' XP');
+ el('floor').textContent=depth+'층 · Lv. '+current+' · Stage '+stage()+' · '+(next?(xp-start)+' / '+(next-start)+' XP':xp+' XP');
  const progress=el('progress'), percent=next?Math.floor(100*(xp-start)/(next-start)):100;
  progress.firstElementChild.style.width=percent+'%';
  progress.setAttribute('aria-valuenow',percent);
- el('floor').title='입구에서 '+meters+'m';
+ el('floor').title=mineZone().name+' · 입구에서 '+meters+'m';
  updateLife();updateQuestTracking();
  el('bag').textContent=bag.map((n,i)=>n?ores[i][0]+' '+n:'').filter(Boolean).join(' · ')||'광석 가방이 비어 있어요';
  el('sell').disabled=!bag.some((amount,type)=>amount&&!reserves[type]);
@@ -1018,9 +1299,9 @@ function mine(manual){
   boss.hp-=shield?Math.max(1,Math.round(dealt*.4)):dealt;
   if(boss.hp<=0){
    bossVictory={name:bossSpec().name,age:0};
-   bossWins++;mined=Math.max(mined,bossWins*120);xp+=20;record('bosses');record('xp',20);
+   bossWins++;if(depth===bossWins*10)floorMined=Math.max(floorMined,floorMineTarget);mined=Math.max(mined,bossWins*120);xp+=20;record('bosses');record('xp',20);
    const gem=level()>=12?(bossWins%2?6:11):level()>=8?5:3;
-   chests.push({id:'boss-'+bossWins,x:boss.x,y:boss.y,tier:bossWins,gem});
+   chests.push({id:'boss-'+bossWins,floor:depth,x:boss.x,y:boss.y,tier:bossWins,gem});
    sparks({x:boss.x,y:boss.y,type:gem},36,0);combo={x:boss.x,y:boss.y,text:'BOSS CLEAR',age:0};
    boss=null;flash=.4;note('보석 괴물 격파! · 보물상자 등장 · +20 XP');exposeVeins();
   }else note(bossSpec().name+' · '+boss.hp+' / '+boss.max+' HP');
@@ -1030,7 +1311,8 @@ function mine(manual){
  const queue=[], broken=new Set();
  for(const rock of rocks){
   if(!weaponHit(rock,center,radius,id))continue;
-  rock.hp-=rock===center?damage:Math.max(1,damage-1);
+  const strength=rock===center?damage:Math.max(1,damage-1);
+  rock.hp-=strength+(depth>1&&manual&&rock===center&&mineZone().efficient.includes(rock.type)?1:0);
   if(rock.hp<=0){broken.add(rock);queue.push([rock,0])}else sparks(rock,4,0);
  }
  if(manual){gearPulse(center,id,critical);if(hitShake)shakeTime=.09}
@@ -1043,7 +1325,7 @@ function breakRocks(queue,broken,center,manual,target){
  const oldLevel=level();
  for(const [rock,step] of queue){
   const delay=step*.028;
-  mined++;const earned=rock.type===8?1:(rock.type>=3&&rock.type<=7)||rock.type===11?3:2;
+  mined++;floorMined++;const earned=rock.type===8?1:(rock.type>=3&&rock.type<=7)||rock.type===11?3:2;
   const auto=!manual&&Boolean(target);
   xp+=earned;record('rocks');record('xp',earned);
   if(!auto)questEvent('mine');
@@ -1059,10 +1341,7 @@ function breakRocks(queue,broken,center,manual,target){
   }
  }
  rocks=rocks.filter(r=>!broken.has(r));
- if(!boss&&stage()===(bossWins+1)*10){
-  boss=makeBoss();
-  combo={x:boss.x,y:boss.y,text:'BOSS',age:0};
- }
+ spawnFloorBoss();
  if(boost&&broken.size>1)spicy=false;
  if(broken.size>1){
   if(manual||!target)questEvent('chain');
@@ -1129,7 +1408,7 @@ el('drill-upgrade').onclick=()=>{
 };
 el('offline-dismiss').onclick=()=>{offlineReport=null;el('offline-report').close();save()};
 el('offline-report').addEventListener('cancel',event=>event.preventDefault());
-bindLife();bindQuests();
+bindRooms();bindLife();bindQuests();bindLift();bindInventory();
 function drawRect(x,y,w,h,color){g.fillStyle=color;g.fillRect(Math.round(x*2)/2,Math.round(y*2)/2,w,h)}
 const sprites={
  lamp:['  dd  ',' dggd ',' dwwd ',' dggd ','  dd  ','  bb  ','  bb  '],
@@ -1262,12 +1541,12 @@ function render(dt){
  const follow=1-Math.exp(-dt*16);
  camera.x=clamp(camera.x+(targetX-camera.x)*follow,0,world-W);
  camera.y=clamp(camera.y+(targetY-camera.y)*follow,0,Math.max(0,world-H));
- const camX=Math.round(camera.x*2)/2,camY=Math.round(camera.y*2)/2;
+ const camX=Math.round(camera.x*2)/2,camY=Math.round(camera.y*2)/2, zone=mineZone();
  drawRect(0,0,W,H,'#362937');g.save();
  g.translate(-camX+(shakeTime>0&&hitShake?(Math.floor(shakeTime*75)%2?.5:-.5):0),-camY);
  for(let y=Math.floor(camY/16)*16;y<camY+H+16;y+=16)for(let x=Math.floor(camX/16)*16;x<camX+W+16;x+=16){
   const hash=((x*17)^(y*53)^(x*y))>>>0;
-  drawRect(x,y,16,16,['#302b36','#352e38','#39313a','#322c38'][hash>>4&3]);
+  drawRect(x,y,16,16,zone.floor[hash>>4&3]);
   if((hash>>8&3)===0){drawRect(x+3,y+5,3,2,'#513949');drawRect(x+5,y+4,2,1,'#665064')}
   if((hash>>12&7)===0){drawRect(x+8,y+12,5,2,'#2f2434');drawRect(x+9,y+11,3,1,'#6b505b')}
   if((hash>>17&7)===1){drawRect(x+1,y+11,3,1,'#6e565f');drawRect(x+4,y+12,2,1,'#58414f')}
@@ -1278,8 +1557,9 @@ function render(dt){
   drawRect(690,787,172,1,'#a69086');drawRect(690,794,172,1,'#a69086');
  }
  for(const prop of scenery)if(near(prop))drawProp(prop);
+ if(near({x:750,y:740}))drawLiftEntrance();
  for(const rock of rocks)if(near(rock))drawRock(rock);
- for(const chest of chests.concat(hiddenChests)){
+ for(const chest of allFloorChests()){
   if(opened.includes(chest.id)||!near(chest))continue;
   const blocked=chestCovered(chest);
   drawChest(g,chest.x,chest.y,0,blocked);
@@ -1395,7 +1675,7 @@ const skillRings=['orbit','storm','echo','magnet'];
 const pendingReward=()=>milestones.find(mark=>level()>=mark&&!claims.includes(mark));
 const chestCovered=chest=>chest.coverX!==undefined&&rocks.some(rock=>rock.x===chest.coverX&&rock.y===chest.coverY);
 function nearChest(){
- return chests.concat(hiddenChests).find(chest=>!opened.includes(chest.id)&&dist(player,chest)<27&&!chestCovered(chest));
+ return allFloorChests().find(chest=>!opened.includes(chest.id)&&dist(player,chest)<27&&!chestCovered(chest));
 }
 function grantRing(id){
  owned.push(id);
@@ -1576,7 +1856,12 @@ function frame(now){
  if(tickLife(elapsed)){requestAnimationFrame(frame);return}
  if(smith)drawSmith(dt);
  if(chestScene)animateChest(dt);
- if(el('gear').open||el('rewards').open||el('quests').open||el('offline-report').open){requestAnimationFrame(frame);return}
+ if(liftRide)tickLift(dt);
+ if(mealScene){
+  mealScene.age+=dt;drawDining();
+  if(mealScene.age>=.75){mealScene=null;updateLife()}
+ }
+ if(el('gear').open||el('rewards').open||el('quests').open||el('offline-report').open||el('lift').open||el('dining').open||el('lodging').open){requestAnimationFrame(frame);return}
  const height=Math.round(W*view.clientHeight/Math.max(1,view.clientWidth));
  if(height!==H){H=height;view.height=H*2}
  g.setTransform(2,0,0,2,0,0);g.imageSmoothingEnabled=false;
