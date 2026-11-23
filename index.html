@@ -213,7 +213,7 @@ function drawMiner(context,x,y,dir,walk,hit){
   p(-6.5,-18,14.5,1.5,hat.trim);p(3,-19.5,3,2.5,'#fff0b5');p(4,-19,1.5,1,'#fff9dc');
  }
  const skin=pickSkins[weapon()];
- context.save();context.translate(8,-2);context.rotate(hit>0?-2.2+(1-hit/.22)*3.05:-.39);
+ context.save();context.translate(8,-2);context.rotate(hit>0?-2.2+(1-hit/.22)*3.05:.48);
  drawPick(p,skin);context.restore();
  p(4.5,-5,4.5,5,'#322633');p(5,-4.5,2.5,2.5,top.shade);p(6.5,-3.5,2.5,2.5,'#d99d72');p(7,-3.5,1.5,.5,'#f8c49a');
  if(equipped.ring1)p(8,-3,1,1,appearance[equipped.ring1].lit);
@@ -322,7 +322,7 @@ function updateGear(){
  }
  el('reserve').setAttribute('title','재련에는 강철 곡괭이가 필요해요');
  const avatar=el('avatar').getContext('2d');
- if(avatar){avatar.setTransform(2,0,0,2,0,0);avatar.clearRect(0,0,52,52);avatar.fillStyle='#312a38';avatar.fillRect(0,0,52,52);avatar.fillStyle='#3d313d';avatar.fillRect(4,4,44,44);drawMiner(avatar,23,37,1,0,0)}
+ if(avatar){avatar.setTransform(2,0,0,2,0,0);avatar.clearRect(0,0,52,52);avatar.fillStyle='#312a38';avatar.fillRect(0,0,52,52);avatar.fillStyle='#3d313d';avatar.fillRect(4,4,44,44);avatar.translate(22,36);avatar.scale(1.18,1.18);drawMiner(avatar,0,0,1,0,0)}
 }
 el('gear-open').onclick=()=>{
  holding=false;stick=null;keys.clear();updateGear();el('gear').showModal();
