@@ -1,0 +1,888 @@
+<!doctype html>
+<html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#19151f"><title>광맥 브레이커</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#19151f;color:#fff0d1;font:600 14px system-ui,sans-serif}main{max-width:460px;margin:auto;padding:18px 14px max(14px,env(safe-area-inset-bottom))}h1{font-size:26px;margin:0;color:#ffd585;letter-spacing:-1px}header,.row{display:flex;align-items:center;justify-content:space-between;gap:8px}small{color:#cbb6a5}.cash{color:#ffcf67}canvas{display:block;width:100%;max-height:52svh;object-fit:contain;background:#211a28;image-rendering:pixelated;border:3px solid #634958;touch-action:manipulation;outline-offset:3px}.row{margin:9px 0}.bar{width:74px;height:8px;background:#47313d;display:inline-block;margin-left:5px}.bar i{height:100%;display:block;background:#ed9967}.panel{background:#302332;padding:8px 10px;border:1px solid #624653;margin-top:8px}.buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}button{min-height:43px;background:#523541;color:#fff0d1;border:1px solid #926252;font:inherit;touch-action:manipulation;padding:4px}button:active{background:#815441}button:disabled{opacity:.52}#next{width:100%;margin-top:8px;background:#805335}#note{min-height:1.5em;margin:5px 0;color:#f9c58a}#bag{min-height:1.3em;margin-bottom:6px}
+canvas{touch-action:none;width:100%;height:clamp(210px,48svh,480px);max-height:none;object-fit:fill}#swing{width:100%;margin-top:6px;min-height:50px;background:#805335;touch-action:none}#swing:active{background:#af744a}
+.map{position:relative}.map-tools{position:absolute;top:10px;right:10px;display:flex;gap:5px}.map-tools button{padding:0 12px;background:#292633ed;border:1px solid #b78b61}#gear{position:fixed;inset:0;margin:auto;width:min(calc(100% - 24px),420px);max-height:85dvh;overflow:auto;color:#fff0d1;background:#302332;border:2px solid #b78b61;padding:14px}#gear::backdrop{background:#16101bd9}#gear h2{margin:0;font-size:19px}#gear h3{font-size:13px;margin:15px 0 0;color:#d5b79c}#gear-close{padding:0 12px}#slots,#shop{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}#shop button small{display:block}#slots button small{display:block}#slots [aria-pressed=true]{border-color:#ffcd83}#equipment-note{margin:8px 0 0;color:#ffd585;min-height:1.2em}.paperdoll{display:grid;grid-template-columns:1fr 105px 1fr;gap:8px;align-items:center;margin-top:12px;background:#241e2b;padding:8px;border:1px solid #765363}#avatar{grid-column:2;grid-row:1/4;width:100%;height:auto;aspect-ratio:1;max-height:none;border:1px solid #89645d;background:#342a3a}#slots{display:contents}#slots button:nth-child(odd){grid-column:1}#slots button:nth-child(even){grid-column:3}#slots button:nth-child(-n+2){grid-row:1}#slots button:nth-child(n+3):nth-child(-n+4){grid-row:2}#slots button:nth-child(n+5){grid-row:3}.item-icon{vertical-align:middle;width:20px;height:20px;image-rendering:pixelated;margin-right:4px}#reserve{margin:6px 0;color:#e5bb94}#reserve label{display:inline-block;margin:3px 8px 3px 0}#progress{height:5px;background:#47313d;margin:-3px 0 7px}#progress i{display:block;height:100%;background:#88d0bd}#smith{width:min(calc(100% - 30px),330px);padding:12px;background:#302332;color:#fff0d1;border:2px solid #b78b61;text-align:center}#smith::backdrop{background:#151019cf}#smith h2{margin:0 0 8px}#smith-scene{height:auto;max-height:none}#smith-result{min-height:1.4em}#rewards{width:min(calc(100% - 30px),350px);background:#342636;color:#fff0d1;border:2px solid #b78b61;padding:14px}#rewards::backdrop{background:#19131cd9}#rewards h2{margin:0 0 10px}#reward-options{display:grid;gap:7px}#reward-options button{text-align:left;padding:8px}#reward-options small{display:block}#chest-open{position:absolute;bottom:10px;left:10px;background:#704636;padding:0 12px}#chest-art{height:auto;max-height:none}#reward-open{color:#ffe597}[hidden]{display:none!important}</style>
+<main><header><div><small>자유 채굴</small><h1>광맥 브레이커</h1></div><strong class="cash" id="cash"></strong></header>
+<div class="row"><span id="floor"></span><span>허기 <span class="bar"><i id="hunger"></i></span></span></div>
+<div id="progress" role="progressbar" aria-label="다음 광부 레벨"><i></i></div><div class="map"><canvas id="mine" width="448" height="504" aria-label="광산. 화면을 밀어서 이동하세요"></canvas><div class="map-tools"><button id="reward-open" hidden>레벨 보상</button><button id="gear-open" aria-haspopup="dialog">인벤토리</button></div><button id="chest-open" hidden>보물상자 열기</button></div><button id="swing">곡괭이 휘두르기 ⛏</button><p id="note" role="status">화면을 밀어 이동하고 곡괭이를 눌러요.</p>
+<section class="panel" aria-label="광석 거래소"><div id="bag"></div><div class="buttons"><button id="sell">광석 팔기</button><button id="drill">자동 드릴 · Lv. 5 / 120G</button></div></section>
+<section class="panel" aria-label="광부식당"><small>광부식당</small><div class="buttons"><button id="meal">광부백반 · 첫 끼 무료</button><button id="spicy">제육 든든밥 · 9G</button></div></section>
+<dialog id="gear" aria-labelledby="gear-title"><header><h2 id="gear-title">인벤토리</h2><button id="gear-close">닫기</button></header>
+<div class="paperdoll"><canvas id="avatar" width="104" height="104" aria-label="착용 중인 광부 모습"></canvas><div id="slots" aria-label="장비 슬롯"></div></div><p id="equipment-note" role="status"></p>
+<h3>장비 상점과 보유 장비</h3><div id="shop" aria-label="장비 상점과 보유 장비"></div><h3>대장간</h3><small>강철 곡괭이 보유 시 보석 곡괭이를 재련할 수 있어요.</small><div id="reserve"></div><div class="buttons" id="forge"></div></dialog><dialog id="smith" aria-labelledby="smith-title"><h2 id="smith-title">대장간</h2><canvas id="smith-scene" width="128" height="78" aria-hidden="true"></canvas><p id="smith-result" role="status"></p><button id="smith-close">확인</button></dialog><dialog id="rewards" aria-labelledby="reward-title"><h2 id="reward-title"></h2><canvas id="chest-art" width="112" height="58" aria-hidden="true" hidden></canvas><p id="reward-copy" role="status"></p><div id="reward-options"></div><button id="reward-close">닫기</button></dialog></main>
+<script>
+const el=id=>document.getElementById(id);
+const view=el('mine'), g=view.getContext('2d');
+const world=1500,W=224;
+let H=252;
+const ores=[
+ ['석탄','#89869f',1,1],['구리','#ee9864',2,3],['철','#bdc9d3',3,4],['은','#81d9e4',2,6],
+ ['금','#ffc34d',3,9],['자수정','#c08aff',2,10],['사파이어','#6398ff',4,13],['루비','#ff6375',4,17],
+ ['돌','#827688',2,1],['단단한 암석','#625867',4,2],['흑요암','#616183',5,3],['다이아몬드','#aef4fa',6,24]
+];
+const key='ore-breaker-roaming-v1',mapVersion=2,drillPrice=120,drillLevel=5;
+const thresholds=[0,12,30,55,85,125,175,235,310,400,505,630,775,940,1125,1330,1555,1800,2065,2350];
+const unlock=[1,1,4,4,8,8,12,12,1,4,12,12];
+let xp=0, mined=0, bossWins=0, boss=null, smith=null, wave=null, combo=null;
+const stage=()=>Math.min(Math.floor(mined/12)+1,(bossWins+1)*10);
+const milestones=[2,4,7,10];
+let claims=[],rank={},chests=[],opened=[],chestScene=null;
+const hiddenChests=[{id:'cache-east',x:848,y:831,coverX:848,coverY:829,tier:0},{id:'cache-west',x:691,y:795,coverX:691,coverY:794,tier:0}];
+let orbitTime=0, orbitCooldown=0, stormTimer=0, magnetCharge=0, echoes=[], skillFx=[];
+function level(){return thresholds.filter(threshold=>xp>=threshold).length}
+
+const slots={hat:'모자',top:'상의',legs:'하의',ring1:'반지 1',ring2:'반지 2',weapon:'무기'};
+const items={
+ helmet:{name:'광부 안전모',slot:'hat',price:16,description:'곡괭이질 허기 감소'},
+ vest:{name:'광부 작업복',slot:'top',price:21,description:'곡괭이 사거리 증가'},
+ boots:{name:'갱도 작업바지',slot:'legs',price:20,description:'이동 속도 증가'},
+ orbit:{name:'궤도 반지',slot:'ring',description:'광부 주변을 도는 보석이 암석을 타격'},
+ storm:{name:'번개 반지',slot:'ring',description:'근처 암석 사이를 튕기는 번개'},
+ magnet:{name:'자석 반지',slot:'ring',price:26,description:'보석을 끌어당기고 자력 파동 발동'},
+ echo:{name:'공명 반지',slot:'ring',price:34,description:'연쇄 종료 후 공명 충격파'},
+ wood:{name:'기본 곡괭이',slot:'weapon',damage:1,radius:0,description:'1단계 · 피해 1'},
+ pick:{name:'철 곡괭이',slot:'weapon',price:30,damage:2,radius:15,description:'2단계 · 피해 2'},
+ steel:{name:'강철 곡괭이',slot:'weapon',price:95,damage:3,radius:20,description:'3단계 · 피해 3 · 주변 타격'},
+ sapphire:{name:'사파이어 곡괭이',slot:'weapon',damage:4,radius:28,description:'재련 · 피해 4 · 넓은 충격파',recipe:{type:6,count:3,gold:80}},
+ diamond:{name:'다이아 곡괭이',slot:'weapon',damage:5,radius:37,description:'재련 · 피해 5 · 최대 충격파',recipe:{type:11,count:3,gold:120}}
+};
+let owned=['wood'],equipped={weapon:'wood'},ringSlot='ring1',reserves={6:true,11:true};
+const weapon=()=>equipped.weapon||'wood';
+const wearing=id=>Object.values(equipped).includes(id);
+
+const player={x:750,y:750,dir:1,walk:0};
+let rocks=[],loot=[],dust=[],cash=0,hunger=0,drill=false,freeMeal=true,spicy=false,best=0;
+let bag=ores.map(()=>0),swing=0,shake=0,flash=0,cooldown=0,drillTimer=0,saveTimer=0,holding=false,stick=null,audio;
+const keys=new Set(), clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+function addRock(x,y,type){
+ const locked=unlock[type]>1;
+ const visibleType=locked?8:type;
+ rocks.push({x,y,type:visibleType,hp:ores[visibleType][2],reveal:locked?type:undefined});
+}
+const shapes=[
+ [' kko ','kscok','kccok',' kko '],
+ ['cck  ',' cck ','  csc','   kk'],
+ ['kkk  ','khrhk','khgsk',' kkk '],
+ [' o o ','ooaoo','o g o',' kkk '],
+ ['kk kk','kbbbk','kbrbk','kbhbk','kk kk'],
+ ['c c s',' c s ',' kas ','  ok ']
+];
+const types={k:8,o:0,c:1,h:2,s:3,g:4,a:5,b:10,r:7,u:6};
+function layVein(x,y,shape,variant){
+ shape.forEach((row,dy)=>[...row].forEach((mark,dx)=>{
+  if(mark===' ')return;
+  const type=mark==='r'&&variant%2===0?6:mark==='k'&&variant%4===3?9:types[mark];
+  addRock(x+dx*13+(dy%2)*2,y+dy*13,type);
+ }));
+}
+for(let y=58;y<world-80;y+=92)for(let x=58;x<world-80;x+=92){
+ if(Math.hypot(x-750,y-750)<145)continue;
+ const variant=((x*37)^(y*53)^(x*y))>>>0;
+ layVein(x+variant%17,y+(variant>>5&15),shapes[(variant>>9&127)%shapes.length],variant);
+}
+for(let i=0;i<11;i++)addRock(774+i%4*13,746+Math.floor(i/4)*13,1);
+layVein(665,768,shapes[0],0);
+layVein(716,664,shapes[2],3);
+layVein(822,803,shapes[3],0);
+layVein(862,724,shapes[5],0);
+layVein(690,834,shapes[4],1);
+const diamondSites=[[496,467],[1084,461],[449,1080],[1111,1079],[765,1250],[758,255]];
+function addDiamondSites(){diamondSites.forEach(([x,y])=>[[0,0],[13,1],[6,13]].forEach(([dx,dy])=>addRock(x+dx,y+dy,11)))}
+addDiamondSites();
+const scenery=[
+ {x:736,y:728,kind:'lamp'},{x:758,y:785,kind:'cart'},{x:704,y:740,kind:'beam'},
+ {x:812,y:702,kind:'lamp'},{x:858,y:788,kind:'beam'},{x:680,y:824,kind:'lamp'}
+];
+for(let y=96;y<world-70;y+=146)for(let x=82;x<world-70;x+=151){
+ if(Math.hypot(x-750,y-750)<145)continue;
+ const hash=((x*31)^(y*89)^(x*y))>>>0;
+ scenery.push({x:x+hash%39,y:y+(hash>>8&39),kind:['lamp','cart','beam','fungi'][hash>>4&3]});
+}
+function exposeVeins(){
+ const current=level();
+ for(const rock of rocks){
+  if(rock.reveal===undefined||rock.hp!==ores[rock.type][2]||unlock[rock.reveal]>current||dist(player,rock)<110)continue;
+  rock.type=rock.reveal;rock.hp=ores[rock.type][2];delete rock.reveal;
+ }
+}
+let idleCount=0;
+try{
+ const data=JSON.parse(localStorage.getItem(key));
+ if(data){
+  Object.assign(player,data.player);
+  owned=[...new Set(['wood',...(data.owned??[])])];equipped={weapon:'wood',...(data.equipped??{})};reserves={...reserves,...data.reserves};
+  ({loot,cash,hunger,drill,freeMeal,spicy,best}=data);
+  bag=ores.map((_,index)=>data.bag[index]??0);
+  claims=data.claims??[];rank=data.rank??{};chests=data.chests??[];opened=data.opened??[];
+  xp=data.xp??0;mined=data.mined??0;bossWins=data.bossWins??0;boss=data.boss??null;
+  const seconds=(Date.now()-(data.savedAt??Date.now()))/1000;
+  if(drill&&seconds>=60){
+   idleCount=Math.min(60,Math.floor(seconds/120));
+   for(let i=0;i<idleCount;i++)bag[level()>=4&&i%4===0?2:1]++;
+   xp+=idleCount;
+  }
+  if(data.mapVersion===mapVersion){rocks=data.rocks;if(!data.diamondSites)addDiamondSites()}
+ }
+}catch{}
+function save(){
+ try{localStorage.setItem(key,JSON.stringify({player,rocks,loot,cash,hunger,drill,freeMeal,spicy,bag,best,owned,equipped,xp,mapVersion,reserves,diamondSites:true,mined,bossWins,boss,claims,rank,chests,opened,savedAt:Date.now()}))}catch{}
+}
+function note(message){el('note').textContent=message}
+function gearNote(message){el('equipment-note').textContent=message}
+const appearance={
+ helmet:{metal:'#ac6950',lit:'#ffd097',trim:'#f7a83e'},
+ vest:{cloth:'#437b70',shade:'#294e51',trim:'#d0a66c'},
+ boots:{cloth:'#71667d',shade:'#463e58',trim:'#d3b1a2'},
+ orbit:{metal:'#7ddfae',lit:'#efffd0',gem:'#54bda0'},storm:{metal:'#7796e7',lit:'#edfbff',gem:'#b0a4ff'},
+ magnet:{metal:'#70d5cc',lit:'#cbfff8',gem:'#3c90aa'},
+ echo:{metal:'#d6a55c',lit:'#f7d78d',gem:'#b87eec'}
+};
+const pickSkins={
+ wood:{head:'#ab897a',edge:'#d5b19b',haft:'#795037',size:0,glow:null},
+ pick:{head:'#788da3',edge:'#d1e0e2',haft:'#a06a46',size:1,glow:null},
+ steel:{head:'#547187',edge:'#f3e1ad',haft:'#604739',size:2,glow:null},
+ sapphire:{head:'#416dce',edge:'#acf5ff',haft:'#534c85',size:2,glow:'#5698ff'},
+ diamond:{head:'#45aeb4',edge:'#e1ffed',haft:'#715b82',size:3,glow:'#adfff3'}
+};
+function pixel(context,x,y,w,h,color){
+ context.fillStyle=color;context.fillRect(Math.round(x*2)/2,Math.round(y*2)/2,w,h);
+}
+function drawPick(p,skin){
+ const {head,edge,haft,size,glow}=skin;
+ if(glow){p(-8-size,-17,17+size*2,12,glow+'33');p(-7-size,-14,15+size*2,7,glow+'66')}
+ p(-2,-10,4,20,'#25202d');p(-1,-10,2,19,haft);p(0,-6,1,12,'#d7a478');
+ p(-6-size,-14,13+size*2,4,'#242333');
+ p(-7-size,-12,4,7,'#242333');p(4+size,-12,4,7,'#242333');
+ p(-5-size,-13,11+size*2,2,edge);p(-6-size,-11,3,5,head);p(4+size,-11,3,4,head);
+ p(-3-size,-11,7+size*2,2,head);p(-2,-12,4,4,edge);
+ if(size>=2){p(-1,-12,2,3,glow||'#d69765');p(-2,3,4,3,'#dbad74')}
+ if(glow){p(-8-size,-15,1,3,edge);p(8+size,-8,2,1,edge)}
+}
+const faceSprite=[
+ '       oooooo           ',
+ '     oohhhhhhoo         ',
+ '    ohhHhHhhhhoo        ',
+ '   ohHHhhHHhhhhho       ',
+ '  ohHhhhhhhhhhhoho      ',
+ '  ohhhhhHHhhhssho       ',
+ ' ohhhhhhsssSSSssso      ',
+ ' ohhhhosssSSSSSssso     ',
+ ' ohhhsosssSbbSSssso     ',
+ ' ohhesosssSSwiSsSso     ',
+ ' ohheesossSSSSSsSsso    ',
+ '  ohesossssSSSSSSSsso   ',
+ '   ohhossSsssSssSso     ',
+ '    ohbossshHHhhSo      ',
+ '    ohbbbshHhHHho       ',
+ '     obbbhhoooho        ',
+ '     obbbbshhsso        ',
+ '      obbbbhhho         ',
+ '       oobbboo          ',
+ '         ooo            '
+];
+const facePalette={o:'#221c27',h:'#342633',H:'#67454a',s:'#b87857',S:'#eab88a',e:'#d99669',b:'#49323a',w:'#f5dfbd',i:'#342830'};
+function paintFace(p){
+ faceSprite.forEach((row,y)=>[...row].forEach((mark,x)=>{
+  if(facePalette[mark])p(-7.5+x*.65,-20+y*.65,.7,.7,facePalette[mark]);
+ }));
+}
+function drawMiner(context,x,y,dir,walk,hit){
+ context.save();context.translate(Math.round(x*2)/2,Math.round(y*2)/2);context.scale(dir,1);
+ const p=(...args)=>pixel(context,...args);
+ const stride=Math.sin(walk*10)*1.5;
+ const legs=appearance[equipped.legs]||{cloth:'#505465',shade:'#343443',trim:'#827680'};
+ p(-9,9,19,2,'#241b28');p(-6,10,14,1,'#211922');
+ for(const [lx,ly] of [[-5.5,2.5+stride],[1.5,2.5-stride]]){
+  p(lx-.5,ly,5.5,7.5,'#26222e');p(lx,ly,4.5,6,legs.shade);p(lx+.5,ly,3,4.5,legs.cloth);
+  p(lx+1,ly+1,1,3.5,legs.trim);p(lx,ly+5,4.5,1,'#745448');
+  p(lx-.5,ly+6,6,3,'#2a222c');p(lx,ly+6,5,1,'#8f6253');p(lx+3,ly+7,2,1,'#bd8a66');
+ }
+ const top=appearance[equipped.top]||{cloth:'#6b7880',shade:'#42545f',trim:'#a77a5c'};
+ p(-7,-7,13.5,11.5,'#29222e');p(-8,-5,3,7,'#29222e');p(-7,-6.5,12,10,top.shade);
+ p(-6,-6,10,8,top.cloth);p(-5.5,-5.5,1.5,7,top.trim);p(2.5,-4.5,1,6,top.trim);
+ p(-5,0,8,3,'#3e3440');p(-4.5,.5,6.5,1,'#705447');p(-.5,.5,2,2,'#d0a367');p(0,1,1,1,'#55413d');
+ p(-7.5,-4.5,2,4,top.cloth);p(-8,-1.5,2.5,2.5,'#c28864');
+ p(-4.5,-8.5,9,3,'#793e47');p(-4,-8,8,1.5,'#bd594e');p(-2,-7.5,4,1,'#ec8067');p(-1,-6.5,2,2,'#b54c49');
+ paintFace(p);
+ const hat=appearance[equipped.hat];
+ if(hat){
+  p(-7,-18,14,3,'#352733');p(-5.5,-21,10,4,hat.metal);p(-4.5,-20.5,8,1.5,hat.lit);
+  p(-6.5,-18,14.5,1.5,hat.trim);p(3,-19.5,3,2.5,'#fff0b5');p(4,-19,1.5,1,'#fff9dc');
+ }
+ const skin=pickSkins[weapon()];
+ context.save();context.translate(8,-2);context.rotate(hit>0?-2.2+(1-hit/.22)*3.05:-.39);
+ drawPick(p,skin);context.restore();
+ p(4.5,-5,4.5,5,'#322633');p(5,-4.5,2.5,2.5,top.shade);p(6.5,-3.5,2.5,2.5,'#d99d72');p(7,-3.5,1.5,.5,'#f8c49a');
+ if(equipped.ring1)p(8,-3,1,1,appearance[equipped.ring1].lit);
+ if(equipped.ring2)p(-7,-1,1,1,appearance[equipped.ring2].lit);
+ if(hit>0){p(13,-14,7,1,skin.glow||'#ffe3a1');p(20,-12,4,1.5,skin.edge);p(24,-9,1,4,skin.edge)}
+ context.restore();
+}
+
+function makeIcon(){
+ const icon=document.createElement('canvas');
+ icon.width=32;icon.height=32;icon.className='item-icon';icon.setAttribute('aria-hidden','true');
+ return icon;
+}
+function drawIcon(icon,id){
+ const context=icon.getContext('2d');
+ context.clearRect(0,0,32,32);
+ if(!id)return;
+ const p=(...args)=>pixel(context,...args);
+ const style=appearance[id];
+ if(pickSkins[id]){
+  context.save();context.translate(17,18);context.rotate(.55);drawPick(p,pickSkins[id]);context.restore();
+ }else if(items[id].slot==='ring'){
+  p(7,12,18,12,'#251e2b');p(10,8,12,19,'#251e2b');
+  p(9,12,14,10,style.metal);p(12,9,8,16,style.metal);p(12,14,8,6,'#392c3c');
+  p(11,9,10,7,style.gem);p(13,10,4,2,style.lit);p(12,22,7,2,style.lit);
+ }else if(id==='helmet'){
+  p(5,18,23,6,'#332631');p(8,10,16,10,style.metal);p(11,8,10,5,style.lit);p(6,19,21,3,style.trim);p(19,13,5,5,'#ffe9af');
+ }else if(id==='vest'){
+  p(6,10,20,13,style.shade);p(10,8,12,17,style.cloth);p(11,10,2,13,style.trim);p(19,10,2,13,style.trim);p(13,22,7,2,style.shade);
+ }else{
+  p(8,7,16,15,style.cloth);p(8,20,7,6,style.shade);p(17,20,7,6,style.shade);p(15,16,2,10,'#34283a');p(8,8,16,2,style.trim);
+ }
+}
+
+const slotButtons={},shopButtons={},forgeButtons={};
+for(const [slot,label] of Object.entries(slots)){
+ const button=document.createElement('button'), title=document.createElement('span'), detail=document.createElement('small');
+ title.textContent=label;
+ const icon=makeIcon();button.append(icon,title,detail);
+ el('slots').append(button);
+ slotButtons[slot]={button,detail,icon};
+ button.onclick=()=>{
+  const item=equipped[slot];
+  if(slot.startsWith('ring'))ringSlot=slot;
+  if(item&&item!=='wood'){if(slot==='weapon')equipped.weapon='wood';else delete equipped[slot];gearNote(items[item].name+' 해제')}
+  else if(slot.startsWith('ring'))gearNote(label+' 선택. 보유한 반지를 눌러 착용하세요.');
+  save();updateGear();
+ };
+}
+for(const [id,item] of Object.entries(items)){
+ const button=document.createElement('button'), title=document.createElement('span'), detail=document.createElement('small');
+ detail.textContent=item.description;
+ const icon=makeIcon();drawIcon(icon,id);button.append(icon,title,detail);
+ el('shop').append(button);shopButtons[id]={button,title};
+ if(item.recipe){
+  const {type,count,gold}=item.recipe;
+  const forge=document.createElement('button');
+  forge.textContent=item.name+' · '+ores[type][0]+' '+count+'개 + '+gold+'G';
+  el('forge').append(forge);forgeButtons[id]=forge;
+  forge.onclick=()=>{
+   if(smith||!canForge(id))return;
+   bag[type]-=count;cash-=gold;owned.push(id);equipped.weapon=id;
+   gearNote(item.name+' 재련 및 착용');save();update();beginSmith(id);
+  };
+ }
+ button.onclick=()=>{
+  if(!owned.includes(id)){
+   if(item.price===undefined||cash<item.price)return;
+   cash-=item.price;owned.push(id);gearNote(item.name+' 구매. 한 번 더 눌러 착용하세요.');
+  }else{
+   if(wearing(id))return;
+   const slot=item.slot==='ring'?ringSlot:item.slot;
+   equipped[slot]=id;
+   if(item.slot==='ring')ringSlot=slot==='ring1'?'ring2':'ring1';
+   gearNote(item.name+' 착용');
+  }
+  save();update();
+ };
+}
+for(const type of [6,11]){
+ const label=document.createElement('label'),input=document.createElement('input'),name=document.createElement('span');
+ input.type='checkbox';input.checked=reserves[type];
+ name.textContent=ores[type][0]+' 판매 보류';
+ label.append(input,name);el('reserve').append(label);
+ input.onchange=()=>{reserves[type]=input.checked;save();update()};
+}
+function canForge(id){
+ const {type,count,gold}=items[id].recipe;
+ return owned.includes('steel')&&!owned.includes(id)&&bag[type]>=count&&cash>=gold;
+}
+function updateGear(){
+ for(const [slot,{button,detail,icon}] of Object.entries(slotButtons)){
+  detail.textContent=items[equipped[slot]]?.name??'비어 있음';
+  drawIcon(icon,equipped[slot]);
+  button.disabled=equipped[slot]==='wood'||(!equipped[slot]&&!slot.startsWith('ring'));
+  if(slot.startsWith('ring'))button.setAttribute('aria-pressed',String(slot===ringSlot));
+ }
+ for(const [id,{button,title}] of Object.entries(shopButtons)){
+  const item=items[id], purchased=owned.includes(id), active=wearing(id);
+  title.textContent=item.name+' · '+(active?'착용 중':purchased?'착용':item.recipe?'재련':item.price===undefined?'보상 획득':item.price+'G');
+  button.disabled=active||(!purchased&&(item.price===undefined||cash<item.price));
+ }
+ for(const [id,button] of Object.entries(forgeButtons)){
+  button.disabled=!canForge(id);
+  button.hidden=owned.includes(id);
+ }
+ el('reserve').setAttribute('title','재련에는 강철 곡괭이가 필요해요');
+ const avatar=el('avatar').getContext('2d');
+ if(avatar){avatar.setTransform(2,0,0,2,0,0);avatar.clearRect(0,0,52,52);avatar.fillStyle='#312a38';avatar.fillRect(0,0,52,52);avatar.fillStyle='#3d313d';avatar.fillRect(4,4,44,44);drawMiner(avatar,23,37,1,0,0)}
+}
+el('gear-open').onclick=()=>{
+ holding=false;stick=null;keys.clear();updateGear();el('gear').showModal();
+};
+el('gear-close').onclick=()=>el('gear').close();
+el('gear').addEventListener('click',event=>{
+ if(event.target!==el('gear'))return;
+ const rect=el('gear').getBoundingClientRect();
+ if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)el('gear').close();
+});
+
+
+function update(){
+ el('cash').textContent=cash+' G';
+ const meters=Math.round(Math.hypot(player.x-750,player.y-750)/8);
+ const current=level();
+ el('reward-open').hidden=!pendingReward();
+ el('chest-open').hidden=!nearChest();
+ const next=thresholds[current], start=thresholds[current-1];
+ el('floor').textContent='Lv. '+current+' · Stage '+stage()+' · '+(next?(xp-start)+' / '+(next-start)+' XP':xp+' XP');
+ const progress=el('progress'), percent=next?Math.floor(100*(xp-start)/(next-start)):100;
+ progress.firstElementChild.style.width=percent+'%';
+ progress.setAttribute('aria-valuenow',percent);
+ el('floor').title='입구에서 '+meters+'m';
+ el('hunger').style.width=hunger+'%';
+ el('bag').textContent=bag.map((n,i)=>n?ores[i][0]+' '+n:'').filter(Boolean).join(' · ')||'광석 가방이 비어 있어요';
+ el('sell').disabled=!bag.some((amount,type)=>amount&&!reserves[type]);
+ el('drill').disabled=drill||cash<drillPrice||level()<drillLevel;
+ el('drill').textContent=drill?'자동 드릴 가동 중':'자동 드릴 · Lv. 5 / 120G';
+ el('meal').disabled=!hunger||(!freeMeal&&cash<5);
+ el('meal').textContent=freeMeal?'광부백반 · 첫 끼 무료':'광부백반 · 5G';
+ el('spicy').disabled=spicy||cash<9;
+ el('spicy').textContent=spicy?'제육 연쇄 준비 완료':'제육 든든밥 · 9G';
+ if(el('gear').open)updateGear();
+}
+function sound(count){
+ try{
+  audio??=new (window.AudioContext||window.webkitAudioContext)();
+  if(audio.state==='suspended')audio.resume().catch(()=>{});
+  for(let i=0;i<Math.min(count,7);i++){
+   const t=audio.currentTime+i*.027,o=audio.createOscillator(),v=audio.createGain();
+   o.type='triangle';o.frequency.setValueAtTime(140+i*71,t);o.frequency.exponentialRampToValueAtTime(68+i*35,t+.10);
+   v.gain.setValueAtTime(.07,t);v.gain.exponentialRampToValueAtTime(.001,t+.13);
+   o.connect(v);v.connect(audio.destination);o.start(t);o.stop(t+.14);
+  }
+ }catch{}
+}
+function sparks(rock,count,delay){
+ for(let i=0;i<count;i++)dust.push({x:rock.x,y:rock.y,dx:(Math.random()-.5)*100,dy:(Math.random()-.65)*95,age:-delay,color:ores[rock.type][1]});
+}
+function mine(manual){
+ const range=manual?(wearing('vest')?48:36)+(weapon()==='sapphire'?6:0):60;
+ const target=rocks.reduce((near,r)=>dist(r,player)<(near?dist(near,player):range)?r:near,null);
+ const radius=manual?items[weapon()].radius:0, damage=manual?items[weapon()].damage+(rank.weapon??0):1;
+ const bossNear=boss&&dist(player,boss)<=range;
+ const center=bossNear&&(!target||dist(player,boss)<dist(player,target))?boss:target;
+ if(!center)return;
+ if(manual){
+  swing=.22;player.dir=center.x<player.x?-1:1;
+  hunger=clamp(hunger+(wearing('helmet')?2:3),0,100);
+  if(radius)wave={x:center.x,y:center.y,radius,age:0,color:pickSkins[weapon()].glow||'#efc487'};
+ }
+ if(boss&&(center===boss||(radius&&dist(center,boss)<=radius))){
+  boss.hp-=center===boss?damage:Math.max(1,damage-1);
+  shake=2;
+  if(boss.hp<=0){
+   bossWins++;mined=Math.max(mined,bossWins*120);xp+=20;
+   const gem=level()>=12?(bossWins%2?6:11):level()>=8?5:3;
+   chests.push({id:'boss-'+bossWins,x:boss.x,y:boss.y,tier:bossWins,gem});
+   sparks({x:boss.x,y:boss.y,type:gem},36,0);combo={x:boss.x,y:boss.y,text:'BOSS CLEAR',age:0};
+   boss=null;flash=.4;note('보석 괴물 격파! · 보물상자 등장 · +20 XP');exposeVeins();
+  }else note('보석 괴물 · '+boss.hp+' / '+boss.max+' HP');
+  if(manual)sound(3);
+  update();save();
+ }
+ const queue=[], broken=new Set();
+ for(const rock of rocks){
+  if(rock!==center&&(!radius||dist(rock,center)>radius))continue;
+  rock.hp-=rock===center?damage:Math.max(1,damage-1);
+  if(rock.hp<=0){broken.add(rock);queue.push([rock,0])}else sparks(rock,4,0);
+ }
+ if(!queue.length){if(manual&&center!==boss)sound(1);update();return}
+ breakRocks(queue,broken,center,manual,target);
+}
+function breakRocks(queue,broken,center,manual,target){
+ const boost=manual&&spicy;
+ const oldLevel=level();
+ for(const [rock,step] of queue){
+  const delay=step*.028;
+  mined++;xp+=rock.type===8?1:(rock.type>=3&&rock.type<=7)||rock.type===11?3:2;
+  sparks(rock,10,delay);
+  loot.push({x:rock.x,y:rock.y,type:rock.type,age:-delay,dx:(Math.random()-.5)*85,dy:(Math.random()-.5)*85});
+  const wide=rock.type===5||(rock===target&&boost);
+  const reach=(wide?37:wearing('echo')?24:19)+(manual&&weapon()==='diamond'?4:0);
+  for(const next of rocks){
+   if(!broken.has(next)&&Math.abs(next.x-rock.x)<reach&&dist(next,rock)<reach&&
+    (wide||(next.type===rock.type&&next.type<8)||next.hp<ores[next.type][2])){
+    broken.add(next);queue.push([next,step+1]);
+   }
+  }
+ }
+ rocks=rocks.filter(r=>!broken.has(r));
+ if(!boss&&stage()===(bossWins+1)*10){
+  const max=16+bossWins*8;
+  boss={x:clamp(player.x+player.dir*62,18,world-18),y:clamp(player.y-19,20,world-20),hp:max,max};
+  combo={x:boss.x,y:boss.y,text:'BOSS',age:0};
+ }
+ if(boost&&broken.size>1)spicy=false;
+ if(broken.size>1){
+  best=Math.max(best,broken.size);
+  note(broken.size+'연쇄! · 최고 '+best+'연쇄');
+  if(combo?.text!=='BOSS')combo={x:center.x,y:center.y,text:broken.size+' CHAIN',age:0};
+  shake=Math.min(4,broken.size*.28);flash=.24;
+  if(manual)navigator.vibrate?.(25);
+ }else note(ores[queue[0][0].type][0]+' 파쇄');
+ if(level()>oldLevel){note(el('note').textContent+' · 광부 Lv. '+level()+'!');exposeVeins()}
+ if(boss&&combo?.text==='BOSS'&&combo.age===0)note('Stage '+stage()+' · 보석 괴물 등장!');
+ if(wearing('echo')&&broken.size>=3&&target){
+  const strength=rank.echo??1;
+  echoes.push({x:center.x,y:center.y,wait:.26,radius:22+strength*5,damage:strength});
+ }
+ if(manual)sound(broken.size);
+ update();save();
+}
+function strike(){
+ if(cooldown>0)return;
+ cooldown=hunger>=85?.48:.25;
+ swing=.22;
+ mine(true);
+}
+const swingButton=el('swing');
+swingButton.onpointerdown=e=>{swingButton.setPointerCapture(e.pointerId);holding=true;strike()};
+swingButton.onlostpointercapture=swingButton.onpointerup=swingButton.onpointercancel=()=>holding=false;
+swingButton.onclick=e=>{if(e.detail===0)strike()};
+view.onpointerdown=e=>{
+ if(stick)return;
+ view.setPointerCapture(e.pointerId);
+ stick={id:e.pointerId,x:e.offsetX,y:e.offsetY,dx:0,dy:0};
+};
+view.onpointermove=e=>{if(stick?.id===e.pointerId){stick.dx=e.offsetX-stick.x;stick.dy=e.offsetY-stick.y}};
+view.onpointerup=view.onpointercancel=view.onlostpointercapture=e=>{if(stick?.id===e.pointerId)stick=null};
+window.addEventListener('keydown',e=>{
+ if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','KeyW','KeyA','KeyS','KeyD','Space'].includes(e.code))return;
+ if(e.code==='Space'&&document.activeElement?.tagName==='BUTTON')return;
+ e.preventDefault();keys.add(e.code);
+});
+window.addEventListener('keyup',e=>keys.delete(e.code));
+window.addEventListener('blur',()=>{keys.clear();holding=false;stick=null;save()});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)save()});
+el('sell').onclick=()=>{
+ const total=bag.reduce((sum,n,i)=>sum+(reserves[i]?0:n*ores[i][3]),0);
+ cash+=total;bag=bag.map((n,i)=>reserves[i]?n:0);note('광석 판매 +'+total+' G');update();save();
+};
+el('drill').onclick=()=>{if(cash<drillPrice||level()<drillLevel||drill)return;cash-=drillPrice;drill=true;note('자동 드릴이 주변 광석을 캐기 시작했어요.');update();save()};
+el('meal').onclick=()=>{if(!hunger||(!freeMeal&&cash<5))return;if(!freeMeal)cash-=5;freeMeal=false;hunger=0;note('광부백반을 먹고 허기를 채웠어요.');update();save()};
+el('spicy').onclick=()=>{if(cash<9||spicy)return;cash-=9;hunger=0;spicy=true;note('제육 든든밥! 다음 연쇄가 더 멀리 퍼져요.');update();save()};
+function drawRect(x,y,w,h,color){g.fillStyle=color;g.fillRect(Math.round(x*2)/2,Math.round(y*2)/2,w,h)}
+const sprites={
+ lamp:['  dd  ',' dggd ',' dwwd ',' dggd ','  dd  ','  bb  ','  bb  '],
+ cart:['d        d','dbbbbbbbbd',' dgogogod ',' dggggggd ','  dddddd  ','  w    w  '],
+ beam:['bbbbbbbbbbbbb','bgbbbbbbbbbbd','bbd       dbb','bd         db','bd         db','bd         db','bd         db','bd         db'],
+ fungi:['  oo    ',' oggo o ','  b  ogo',' bb   b ','ddd  ddd']
+};
+const palette={d:'#27202c',b:'#8a5a49',g:'#d49b60',w:'#ffdd92',o:'#ba7065'};
+function drawProp({x,y,kind}){
+ const art=sprites[kind];
+ if(kind==='lamp'){
+  drawRect(x-12,y-10,24,17,'#c88b4219');
+  drawRect(x-8,y-7,16,11,'#f2a95723');drawRect(x-15,y-5,30,10,'#d98e3512');
+ }
+ art.forEach((row,dy)=>[...row].forEach((pixel,dx)=>{
+  if(palette[pixel])drawRect(x+dx*2-art[0].length,y+dy*2-art.length,2,2,palette[pixel]);
+ }));
+ if(kind==='lamp'){
+  drawRect(x-2.5,y-4,5,.5,'#fff6cc');drawRect(x-.5,y-2,1,3,'#fff4b8');
+  drawRect(x-3,y+2.5,6,.5,'#a87c55');
+ }else if(kind==='cart'){
+  drawRect(x-7,y-2,14,.5,'#ecc195');drawRect(x-8,y+1,16,.5,'#ba8967');
+  drawRect(x-7,y+5,2,1,'#c4a389');drawRect(x+5,y+5,2,1,'#c4a389');
+ }else if(kind==='beam'){
+  drawRect(x-12,y-5,24,.5,'#b98462');drawRect(x-11,y-4,4,.5,'#523748');
+  drawRect(x+4,y-3,5,.5,'#60404a');
+ }
+}
+function drawRock(rock){
+ const {x,y,type,hp}=rock;
+ const [,color,max]=ores[type];
+ const variant=(Math.floor(x*7+y*13)%4);
+ drawRect(x-7,y+2,15,5,'#241d2a');
+ drawRect(x-6,y-3,13,8,'#403340');
+ drawRect(x-4,y-6,8,10,'#594650');
+ drawRect(x-5,y-4.5,3,1,'#76616a');drawRect(x-5.5,y-1,1.5,3,'#5d4b57');
+ drawRect(x+3,y+2,2.5,2,'#312a36');drawRect(x+5,y+.5,1.5,2,'#423640');
+ drawRect(x-5+variant,y+3.5,2.5,.5,'#77616c');
+ if(type>=8&&type<=10){
+  drawRect(x-5,y-3,10,5,color);drawRect(x-3,y-5,6,3,color);
+  drawRect(x-3,y-5,4,1,type===10?'#9d87c6':'#a4909f');
+  drawRect(x+3,y+1,2,2,'#3a303e');
+  drawRect(x-4,y-2.5,2.5,.5,'#ae9cab');drawRect(x-3,y-2,1,1,'#958291');
+  drawRect(x+variant-2,y-1,3,.5,'#5f5362');drawRect(x+variant-1,y-.5,2,1,'#685969');
+  if(hp<max){drawRect(x,y-4,1,6,'#2c2330');drawRect(x-2,y,3,1,'#2c2330')}
+  return;
+ }
+ if(type>=5){
+  drawRect(x-4,y-5,3,8,color);drawRect(x-1,y-8,3,11,color);drawRect(x+3,y-4,2,7,color);
+  drawRect(x,y-7,1,5,'#fff0ca');drawRect(x-3,y-4,1,4,'#d4b6c8');
+  drawRect(x+.5,y-1,.5,3,'#ece9ff');drawRect(x+2,y-1,1,3,'#33284d');
+  drawRect(x-4.5,y-2,.5,3,color);drawRect(x+4,y-3,.5,2,'#fff5d4');
+ }else{
+  drawRect(x-4,y-3,4,3,color);drawRect(x-1,y-5,4,5,color);drawRect(x+2,y+1,3,2,color);
+  drawRect(x,y-5,2,1,'#f3d2a5');drawRect(x-4,y-2,1,1,'#e1b395');
+  drawRect(x-2.5,y-3,1,.5,'#fff0c2');drawRect(x+1.5,y-.5,3,.5,'#342a37');drawRect(x+3,y+1,.5,.5,'#ffdbad');
+ }
+ if(hp<max){drawRect(x+1,y-4,1,5,'#382431');drawRect(x-1,y,3,1,'#382431')}
+}
+function drawPlayer(){
+ drawMiner(g,player.x,player.y,player.dir,player.walk,swing);
+}
+function render(){
+ const camX=clamp(player.x-W/2,0,world-W),camY=clamp(player.y-H/2,0,world-H);
+ drawRect(0,0,W,H,'#362937');g.save();
+ g.translate(Math.round(-camX+(shake?Math.random()*shake-shake/2:0)),Math.round(-camY));
+ for(let y=Math.floor(camY/16)*16;y<camY+H+16;y+=16)for(let x=Math.floor(camX/16)*16;x<camX+W+16;x+=16){
+  const hash=((x*17)^(y*53)^(x*y))>>>0;
+  drawRect(x,y,16,16,['#302b36','#352e38','#39313a','#322c38'][hash>>4&3]);
+  if((hash>>8&3)===0){drawRect(x+3,y+5,3,2,'#513949');drawRect(x+5,y+4,2,1,'#665064')}
+  if((hash>>12&7)===0){drawRect(x+8,y+12,5,2,'#2f2434');drawRect(x+9,y+11,3,1,'#6b505b')}
+  if((hash>>17&7)===1){drawRect(x+1,y+11,3,1,'#6e565f');drawRect(x+4,y+12,2,1,'#58414f')}
+ }
+ const near=r=>r.x>=camX-20&&r.x<=camX+W+20&&r.y>=camY-20&&r.y<=camY+H+20;
+ if(camY<807&&camY+H>782){
+  for(let x=Math.max(690,Math.floor(camX/8)*8);x<Math.min(camX+W,865);x+=8)drawRect(x,785,3,12,'#725044');
+  drawRect(690,787,172,1,'#a69086');drawRect(690,794,172,1,'#a69086');
+ }
+ for(const prop of scenery)if(near(prop))drawProp(prop);
+ for(const rock of rocks)if(near(rock))drawRock(rock);
+ for(const chest of chests.concat(hiddenChests)){
+  if(opened.includes(chest.id)||!near(chest))continue;
+  const blocked=chestCovered(chest);
+  drawChest(g,chest.x,chest.y,0,blocked);
+ }
+ drawSkills();
+ if(boss){
+  const x=boss.x,y=boss.y;
+  drawRect(x-12,y+5,24,4,'#211925');drawRect(x-11,y-8,22,14,'#403654');
+  drawRect(x-8,y-13,16,16,'#735399');drawRect(x-4,y-17,8,19,'#a079cf');
+  drawRect(x-3,y-15,4,5,'#dec2ff');drawRect(x-7,y-4,4,3,'#ffe3a2');drawRect(x+3,y-4,4,3,'#ffe3a2');
+  drawRect(x-12,y-22,24,3,'#251e30');drawRect(x-12,y-22,24*boss.hp/boss.max,3,'#ff9f8f');
+ }
+ if(wave){
+  g.save();g.globalAlpha=1-wave.age/.30;g.strokeStyle=wave.color;g.lineWidth=2;
+  g.beginPath();g.arc(wave.x,wave.y,wave.radius*(.35+.65*wave.age/.30),0,Math.PI*2);g.stroke();g.restore();
+ }
+ for(const gem of loot)if(gem.age>=0&&near(gem)){
+  drawRect(gem.x-2,gem.y-2,5,5,ores[gem.type][1]);drawRect(gem.x-1,gem.y-2,2,2,'#fff0c8');
+ }
+ drawPlayer();
+ if(drill){
+  const x=player.x-player.dir*14,y=player.y+2;
+  drawRect(x-5,y-2,10,6,'#9a7660');drawRect(x-5,y+3,8,2,'#271e2b');
+  drawRect(x-2,y-4,4,3,'#eabc67');drawRect(x+4,y,3,2,'#d4ced4');
+ }
+ for(const p of dust)if(p.age>=0)drawRect(p.x,p.y,p.age<.12?3:2,2,p.color);
+ if(combo){
+  g.save();g.globalAlpha=Math.min(1,(1-combo.age)*2);g.font='bold 10px monospace';g.textAlign='center';
+  g.strokeStyle='#261d30';g.lineWidth=3;g.fillStyle='#ffdd91';
+  const y=combo.y-18-combo.age*18;
+  g.strokeText(combo.text,combo.x,y);g.fillText(combo.text,combo.x,y);g.restore();
+ }
+ g.restore();
+ if(flash>0){g.strokeStyle='rgba(255,209,137,'+flash+')';g.lineWidth=4;g.strokeRect(1,1,W-2,H-2)}
+ if(stick){
+  const x=stick.x*W/view.clientWidth,y=stick.y*H/view.clientHeight;
+  g.strokeStyle='#d9af8580';g.beginPath();g.arc(x,y,16,0,Math.PI*2);g.stroke();
+  drawRect(x+clamp(stick.dx/3,-12,12)-3,y+clamp(stick.dy/3,-12,12)-3,6,6,'#d9af85');
+ }
+}
+function beginSmith(id){
+ const dialog=el('smith');
+ smith={id,age:0,strikes:0};
+ el('smith-result').textContent='강철 곡괭이와 보석을 재련하는 중';
+ el('smith-close').disabled=true;
+ dialog.showModal();
+ const reduced=window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+ drawSmith(reduced?2:0);
+}
+function hammerSound(){
+ try{
+  audio??=new (window.AudioContext||window.webkitAudioContext)();
+  if(audio.state==='suspended')audio.resume().catch(()=>{});
+  const t=audio.currentTime;
+  for(const [pitch,volume] of [[164,.09],[515,.045],[1120,.023]]){
+   const tone=audio.createOscillator(),gain=audio.createGain();
+   tone.type='triangle';tone.frequency.value=pitch;
+   gain.gain.setValueAtTime(volume,t);gain.gain.exponentialRampToValueAtTime(.001,t+.18);
+   tone.connect(gain);gain.connect(audio.destination);tone.start(t);tone.stop(t+.2);
+  }
+ }catch{}
+}
+function drawSmith(dt){
+ const scene=el('smith-scene').getContext('2d');
+ const p=(...args)=>pixel(scene,...args);
+ smith.age+=dt;
+ const {id,age}=smith, color=pickSkins[id].glow;
+ const times=[.32,.82,1.32], done=age>=1.63;
+ const strikeCount=times.filter(time=>time<=age).length;
+ if(strikeCount>smith.strikes&&dt<.1)hammerSound();
+ smith.strikes=strikeCount;
+ p(0,0,128,78,'#211a29');p(0,64,128,14,'#352631');
+ p(8,13,25,48,'#523340');p(12,18,17,37,'#301f2b');
+ p(15,44,11,9,'#d76849');p(18,41,5,11,'#efae58');p(19,46,3,5,'#ffe094');
+ p(44,52,47,7,'#211d28');p(46,47,44,5,'#aeb0bd');p(52,52,26,7,'#766a80');
+ p(55,57,17,9,'#514654');p(49,65,29,4,'#817184');
+ scene.save();scene.translate(64,done?37:42);scene.rotate(done?.57:1.52);
+ drawPick(p,pickSkins[done?id:'steel']);scene.restore();
+ if(!done){
+  p(66,42,6,5,color);p(67,40,4,7,color);p(67,41,2,2,'#fff6c6');
+  const next=times[strikeCount]??1.82;
+  const closing=Math.max(0,1-(next-age)/.20);
+  scene.save();scene.translate(88,26+closing*14);scene.rotate(-.7+closing*.82);
+  p(-1,0,3,19,'#9a674e');p(-8,-4,17,8,'#423348');p(-9,-5,18,4,'#b6a2a7');p(-9,-1,6,5,'#796776');
+  scene.restore();
+ }
+ const impact=age-(times[strikeCount-1]??-1);
+ if(!done&&impact<.23)for(let i=0;i<13;i++){
+  const angle=Math.PI+(i/12)*Math.PI;
+  const radius=5+impact*(42+i*5);
+  p(69+Math.cos(angle)*radius,43+Math.sin(angle)*radius,2,2,i%3?color:'#ffdf91');
+ }
+ if(done){
+  el('smith-result').textContent=items[id].name+' 완성 · 착용 완료';
+  el('smith-close').disabled=false;
+  smith=null;
+ }
+}
+el('smith-close').onclick=()=>el('smith').close();
+el('smith').addEventListener('cancel',event=>{if(smith)event.preventDefault()});
+
+const skillRings=['orbit','storm','echo','magnet'];
+const pendingReward=()=>milestones.find(mark=>level()>=mark&&!claims.includes(mark));
+const chestCovered=chest=>chest.coverX!==undefined&&rocks.some(rock=>rock.x===chest.coverX&&rock.y===chest.coverY);
+function nearChest(){
+ return chests.concat(hiddenChests).find(chest=>!opened.includes(chest.id)&&dist(player,chest)<27&&!chestCovered(chest));
+}
+function grantRing(id){
+ owned.push(id);
+ const slot=['ring1','ring2'].find(slot=>!equipped[slot]);
+ if(slot)equipped[slot]=id;
+}
+function pauseInput(){holding=false;stick=null;keys.clear()}
+function rewardButton(label,detail,action){
+ const button=document.createElement('button'),name=document.createElement('span'),copy=document.createElement('small');
+ name.textContent=label;copy.textContent=detail;button.append(name,copy);
+ button.onclick=action;el('reward-options').append(button);
+}
+function resetRewards(title){
+ el('reward-title').textContent=title;
+ el('reward-copy').textContent='';
+ el('reward-options').replaceChildren();
+ el('chest-art').hidden=true;
+ el('reward-close').disabled=false;
+}
+function showLevelChoice(){
+ const mark=pendingReward();
+ if(!mark||el('rewards').open)return;
+ pauseInput();
+ resetRewards('광부 Lv. '+mark+' 보상');
+ const choose=(label,description,apply)=>rewardButton(label,description,()=>{
+  if(pendingReward()!==mark)return;
+  apply();claims.push(mark);save();
+  el('rewards').close();note(label+' 획득');update();
+ });
+ if(mark===2&&["orbit","storm"].some(id=>!owned.includes(id))){
+  for(const id of ['orbit','storm'].filter(id=>!owned.includes(id)))choose(items[id].name,items[id].description,()=>grantRing(id));
+ }else{
+  choose('곡괭이 강화','모든 곡괭이의 피해 +1',()=>{rank.weapon=(rank.weapon??0)+1});
+  for(const id of skillRings.filter(id=>wearing(id))){
+   const details={orbit:'회전 조각과 궤도 범위 증가',storm:'번개가 암석 한 개에 더 튕김',echo:'공명 폭발의 피해와 범위 증가',magnet:'수집 범위 증가, 파동이 더 자주 발동'};
+   choose(items[id].name+' 강화',details[id],()=>{rank[id]=(rank[id]??1)+1});
+  }
+  if(!skillRings.some(id=>wearing(id))){
+   const id=skillRings.find(id=>!owned.includes(id));
+   if(id)choose(items[id].name,items[id].description,()=>grantRing(id));
+  }
+ }
+ el('rewards').showModal();
+}
+function openChest(){
+ const chest=nearChest();
+ if(!chest||el('rewards').open)return;
+ pauseInput();resetRewards(chest.tier?'보석 괴물의 보물상자':'낡은 보물상자');
+ const ring=chest.tier?['storm','orbit','echo','magnet'].find(id=>!owned.includes(id)):null;
+ if(ring)grantRing(ring);
+ const count=chest.tier?5:0;
+ if(count)bag[chest.gem]+=count;
+ const gold=chest.tier?30+10*chest.tier:20;
+ cash+=gold;opened.push(chest.id);save();update();
+ const result=[ring&&items[ring].name,count&&ores[chest.gem][0]+' '+count+'개',gold+'G'].filter(Boolean).join(' · ');
+ chestScene={age:0,result,ring};
+ el('chest-art').hidden=false;el('reward-close').disabled=true;
+ el('rewards').showModal();
+ animateChest(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?1.15:0);
+}
+function drawChest(context,x,y,opening,blocked=false){
+ const p=(dx,dy,w,h,c)=>pixel(context,x+dx,y+dy,w,h,c);
+ if(blocked){p(1,-7,7,3,'#d8a35f');p(5,-6,3,6,'#8e663f');return}
+ p(-11,4,22,4,'#241c28');p(-10,-3,20,10,'#874b3b');
+ p(-9,0,18,5,'#a36144');p(-8,0,2,6,'#e3aa61');p(6,0,2,6,'#e3aa61');
+ const lid=Math.round(opening*9);
+ p(-10,-8-lid,20,7,'#6c392f');p(-9,-8-lid,18,2,'#db9f56');p(-9,-5-lid,18,2,'#ad764c');
+ p(-2,-4,4,5,'#f8d58a');p(0,-3,1,3,'#7e533e');
+}
+function animateChest(dt){
+ const context=el('chest-art').getContext('2d');
+ chestScene.age+=dt;
+ const age=chestScene.age,opening=clamp((age-.34)/.35,0,1);
+ const p=(...args)=>pixel(context,...args);
+ p(0,0,112,58,'#221b2a');
+ const x=56+(age<.34?Math.round(Math.sin(age*75)*age*6):0);
+ if(opening){
+  p(42,20,28,21,'#ffcc5833');p(48,15,16,24,'#ffe79466');
+  for(let i=0;i<9;i++){
+   const angle=i*2.39,range=opening*(12+i*2);
+   p(56+Math.cos(angle)*range,35+Math.sin(angle)*range,2,2,'#ffdf87');
+  }
+  if(chestScene.ring&&opening>.45){p(51,22-opening*8,10,8,'#f2cf82');p(53,23-opening*8,6,5,'#8d6bc1');p(54,22-opening*8,3,2,'#fff6bb')}
+ }
+ drawChest(context,x,43,opening);
+ if(age>=1.1){
+  el('reward-copy').textContent=chestScene.result;
+  el('reward-close').disabled=false;chestScene=null;
+ }
+}
+el('reward-open').onclick=showLevelChoice;
+el('chest-open').onclick=openChest;
+el('reward-close').onclick=()=>el('rewards').close();
+el('rewards').addEventListener('cancel',event=>{if(chestScene)event.preventDefault()});
+function orbitPoints(trail=0){
+ const strength=rank.orbit??1;
+ return Array.from({length:Math.min(3,strength)},(_,i)=>{
+  const angle=orbitTime*2.8+i*2*Math.PI/Math.min(3,strength)-trail;
+  const radius=21+strength*4;
+  return {x:player.x+Math.cos(angle)*radius,y:player.y+Math.sin(angle)*radius};
+ });
+}
+function skillHit(targets,damage,origin){
+ const queue=[],broken=new Set();
+ for(const rock of targets){
+  rock.hp-=damage;
+  if(rock.hp<=0){broken.add(rock);queue.push([rock,0])}
+  else sparks(rock,4,0);
+ }
+ if(queue.length)breakRocks(queue,broken,origin,false,null);
+}
+function skillPulse(origin,radius,damage,color){
+ skillFx.push({kind:'pulse',x:origin.x,y:origin.y,radius,color,age:0});
+ skillHit(rocks.filter(rock=>dist(origin,rock)<=radius),damage,origin);
+}
+function tickSkills(dt){
+ orbitTime+=dt;orbitCooldown-=dt;stormTimer-=dt;
+ skillFx=skillFx.filter(effect=>(effect.age+=dt)<.32);
+ if(wearing('orbit')&&orbitCooldown<=0){
+  const points=orbitPoints();
+  const targets=rocks.filter(rock=>points.some(point=>dist(point,rock)<8));
+  if(targets.length){orbitCooldown=.18;skillHit(targets,1,player)}
+ }
+ if(wearing('storm')&&stormTimer<=0){
+  const candidates=rocks.filter(rock=>dist(rock,player)<63);
+  const points=[{x:player.x,y:player.y}],targets=[];
+  while(targets.length<1+(rank.storm??1)){
+   const from=points.at(-1);
+   const next=candidates.find(rock=>!targets.includes(rock)&&dist(rock,from)<35);
+   if(!next)break;
+   targets.push(next);points.push(next);
+  }
+  if(targets.length){
+   stormTimer=1.7;skillFx.push({kind:'bolt',points,age:0});skillHit(targets,1,points[1]);
+  }
+ }
+ if(wearing('magnet')&&magnetCharge>=Math.max(4,10-(rank.magnet??1)*2)){
+  magnetCharge=0;skillPulse(player,28+(rank.magnet??1)*3,1,'#7de0d9');
+ }
+ const ready=echoes.filter(echo=>(echo.wait-=dt)<=0);
+ echoes=echoes.filter(echo=>echo.wait>0);
+ if(wearing('echo'))for(const echo of ready)skillPulse(echo,echo.radius,echo.damage,'#d1a0ff');
+}
+function drawSkills(){
+ if(wearing('orbit')){
+  for(let trail=3;trail>=0;trail--)for(const point of orbitPoints(trail*.15)){
+   drawRect(point.x-2,point.y-2,trail?3:5,trail?3:5,['#87e8bc','#76d8aa92','#76d8aa61','#76d8aa36'][trail]);
+   if(!trail)drawRect(point.x,point.y-2,2,2,'#f0ffe2');
+  }
+ }
+ for(const effect of skillFx){
+  g.save();g.globalAlpha=1-effect.age/.32;
+  g.strokeStyle=effect.color||'#c8c4ff';g.lineWidth=2;g.beginPath();
+  if(effect.kind==='pulse')g.arc(effect.x,effect.y,effect.radius*(.3+.7*effect.age/.32),0,Math.PI*2);
+  else effect.points.forEach((point,i)=>{
+   if(!i){g.moveTo(point.x,point.y);return}
+   const last=effect.points[i-1];
+   g.lineTo((last.x+point.x)/2+4,(last.y+point.y)/2-6);
+   g.lineTo(point.x,point.y);
+  });
+  g.stroke();g.restore();
+ }
+}
+
+let previous=performance.now();
+function frame(now){
+ const dt=clamp((now-previous)/1000,0,.05);previous=now;
+ if(smith)drawSmith(dt);
+ if(chestScene)animateChest(dt);
+ if(el('gear').open||el('rewards').open){requestAnimationFrame(frame);return}
+ const height=Math.round(W*view.clientHeight/Math.max(1,view.clientWidth));
+ if(height!==H){H=height;view.height=H*2}
+ g.setTransform(2,0,0,2,0,0);
+ let dx=(keys.has('ArrowRight')||keys.has('KeyD')?1:0)-(keys.has('ArrowLeft')||keys.has('KeyA')?1:0);
+ let dy=(keys.has('ArrowDown')||keys.has('KeyS')?1:0)-(keys.has('ArrowUp')||keys.has('KeyW')?1:0);
+ if(stick){dx+=stick.dx/24;dy+=stick.dy/24}
+ const length=Math.hypot(dx,dy);
+ if(length>.12){
+  const speed=(wearing('boots')?92:76)*dt/Math.max(1,length);
+  player.x=clamp(player.x+dx*speed,10,world-10);player.y=clamp(player.y+dy*speed,16,world-10);
+  if(Math.abs(dx)>.15)player.dir=Math.sign(dx);
+  player.walk+=dt;
+  if(Math.floor(player.walk*2)!==Math.floor((player.walk-dt)*2))exposeVeins();
+  update();
+ }
+ if(wave&&(wave.age+=dt)>=.30)wave=null;
+ if(combo&&(combo.age+=dt)>=1)combo=null;
+ if(boss){
+  const distance=dist(player,boss);
+  if(distance>23&&distance<140){boss.x+=(player.x-boss.x)*dt*13/distance;boss.y+=(player.y-boss.y)*dt*13/distance}
+  boss.recoil=Math.max(0,(boss.recoil??0)-dt);
+  if(distance>0&&distance<19&&boss.recoil===0){
+   player.x=clamp(player.x+(player.x-boss.x)*18/distance,10,world-10);
+   player.y=clamp(player.y+(player.y-boss.y)*18/distance,16,world-10);
+   boss.recoil=1.3;shake=3;
+  }
+ }
+ cooldown-=dt;swing=Math.max(0,swing-dt);shake=Math.max(0,shake-14*dt);flash=Math.max(0,flash-dt);
+ if(holding||keys.has('Space'))strike();
+ drillTimer+=dt;
+ if(drill&&drillTimer>.85){drillTimer=0;mine(false)}
+ let collected=false;
+ loot=loot.filter(gem=>{
+  gem.age+=dt;if(gem.age<0)return true;
+  if(gem.age<.22){gem.x+=gem.dx*dt;gem.y+=gem.dy*dt;return true}
+  const d=dist(player,gem);
+  if(d<5){bag[gem.type]++;if(wearing('magnet'))magnetCharge++;collected=true;return false}
+  if(d<(wearing('magnet')?125+8*((rank.magnet??1)-1):90)){const step=Math.min(d,dt*(95+gem.age*42));gem.x+=(player.x-gem.x)*step/d;gem.y+=(player.y-gem.y)*step/d}
+  return true;
+ });
+ if(collected)update();
+ tickSkills(dt);
+ dust=dust.filter(p=>{p.age+=dt;if(p.age>=0){p.x+=p.dx*dt;p.y+=p.dy*dt;p.dy+=155*dt}return p.age<.34});
+ saveTimer+=dt;if(saveTimer>4){saveTimer=0;save()}
+ render();requestAnimationFrame(frame);
+}
+exposeVeins();update();
+if(idleCount){note('방치 채굴 · 광석 '+idleCount+'개 · +'+idleCount+' XP');save()}
+requestAnimationFrame(frame);
+</script></html>
