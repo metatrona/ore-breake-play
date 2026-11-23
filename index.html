@@ -54,7 +54,7 @@ const wearing=id=>Object.values(equipped).includes(id);
 
 const player={x:750,y:750,dir:1,walk:0};
 let rocks=[],loot=[],dust=[],cash=0,hunger=0,drill=false,freeMeal=true,spicy=false,best=0;
-let bag=ores.map(()=>0),swing=0,shake=0,flash=0,cooldown=0,drillTimer=0,saveTimer=0,holding=false,stick=null,audio;
+let bag=ores.map(()=>0),swing=0,flash=0,cooldown=0,drillTimer=0,saveTimer=0,movementHudTimer=0,holding=false,stick=null,audio;
 const keys=new Set(), clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
 function addRock(x,y,type){
@@ -162,55 +162,51 @@ function drawPick(p,skin){
  if(glow){p(-8-size,-15,1,3,edge);p(8+size,-8,2,1,edge)}
 }
 const faceSprite=[
- '       oooooo           ',
- '     oohhhhhhoo         ',
- '    ohhHhHhhhhoo        ',
- '   ohHHhhHHhhhhho       ',
- '  ohHhhhhhhhhhhoho      ',
- '  ohhhhhHHhhhssho       ',
- ' ohhhhhhsssSSSssso      ',
- ' ohhhhosssSSSSSssso     ',
- ' ohhhsosssSbbSSssso     ',
- ' ohhesosssSSwiSsSso     ',
- ' ohheesossSSSSSsSsso    ',
- '  ohesossssSSSSSSSsso   ',
- '   ohhossSsssSssSso     ',
- '    ohbossshHHhhSo      ',
- '    ohbbbshHhHHho       ',
- '     obbbhhoooho        ',
- '     obbbbshhsso        ',
- '      obbbbhhho         ',
- '       oobbboo          ',
- '         ooo            '
+ '     ooooooo     ',
+ '   oohhhhhHhoo   ',
+ '  ohHHhHHhhhhhoo ',
+ ' ohhHhhhhhhhHhho ',
+ ' ohhhhhssSsshhho ',
+ 'ohhhhsssSSSsshho ',
+ 'ohhessSSSSSSSsho ',
+ 'oheesSSbSSbSSsho ',
+ ' ohesSSiSSiSSsso ',
+ '  oesSPSSSSPSsso ',
+ '  ossSPsSSsPSsso ',
+ '   obsHHssHHsso  ',
+ '   obhHhooHhso   ',
+ '    obosSSsob    ',
+ '     obbbbbo     ',
+ '      ooooo      '
 ];
-const facePalette={o:'#221c27',h:'#342633',H:'#67454a',s:'#b87857',S:'#eab88a',e:'#d99669',b:'#49323a',w:'#f5dfbd',i:'#342830'};
+const facePalette={o:'#241f2d',h:'#382833',H:'#73504e',s:'#b97959',S:'#f1bd8a',e:'#de9b68',b:'#4e333b',i:'#302734',P:'#e69779'};
 function paintFace(p){
  faceSprite.forEach((row,y)=>[...row].forEach((mark,x)=>{
-  if(facePalette[mark])p(-7.5+x*.65,-20+y*.65,.7,.7,facePalette[mark]);
+  if(facePalette[mark])p(-9+x,-21+y,1,1,facePalette[mark]);
  }));
 }
 function drawMiner(context,x,y,dir,walk,hit){
  context.save();context.translate(Math.round(x*2)/2,Math.round(y*2)/2);context.scale(dir,1);
  const p=(...args)=>pixel(context,...args);
- const stride=Math.sin(walk*10)*1.5;
- const legs=appearance[equipped.legs]||{cloth:'#505465',shade:'#343443',trim:'#827680'};
- p(-9,9,19,2,'#241b28');p(-6,10,14,1,'#211922');
- for(const [lx,ly] of [[-5.5,2.5+stride],[1.5,2.5-stride]]){
-  p(lx-.5,ly,5.5,7.5,'#26222e');p(lx,ly,4.5,6,legs.shade);p(lx+.5,ly,3,4.5,legs.cloth);
-  p(lx+1,ly+1,1,3.5,legs.trim);p(lx,ly+5,4.5,1,'#745448');
-  p(lx-.5,ly+6,6,3,'#2a222c');p(lx,ly+6,5,1,'#8f6253');p(lx+3,ly+7,2,1,'#bd8a66');
+ const stride=Math.sin(walk*11)*1.1;
+ const legs=appearance[equipped.legs]||{cloth:'#596071',shade:'#38394b',trim:'#797483'};
+ p(-9,8,18,2,'#241c2a');p(-6,10,12,1,'#211924');
+ for(const [lx,ly] of [[-5.5,3.5+stride],[1,3.5-stride]]){
+  p(lx-.5,ly,5.5,5,'#282433');p(lx,ly,4.5,3,legs.shade);p(lx+.5,ly,3,2,legs.cloth);
+  p(lx+1,ly+.5,1,1.5,legs.trim);p(lx-.5,ly+3,6,2.5,'#332631');p(lx+.5,ly+3,4.5,1,'#966756');
  }
- const top=appearance[equipped.top]||{cloth:'#6b7880',shade:'#42545f',trim:'#a77a5c'};
- p(-7,-7,13.5,11.5,'#29222e');p(-8,-5,3,7,'#29222e');p(-7,-6.5,12,10,top.shade);
- p(-6,-6,10,8,top.cloth);p(-5.5,-5.5,1.5,7,top.trim);p(2.5,-4.5,1,6,top.trim);
- p(-5,0,8,3,'#3e3440');p(-4.5,.5,6.5,1,'#705447');p(-.5,.5,2,2,'#d0a367');p(0,1,1,1,'#55413d');
- p(-7.5,-4.5,2,4,top.cloth);p(-8,-1.5,2.5,2.5,'#c28864');
- p(-4.5,-8.5,9,3,'#793e47');p(-4,-8,8,1.5,'#bd594e');p(-2,-7.5,4,1,'#ec8067');p(-1,-6.5,2,2,'#b54c49');
+ const top=appearance[equipped.top]||{cloth:'#69828b',shade:'#415863',trim:'#c38e68'};
+ p(-7,-6,13,10,'#282233');p(-7.5,-4,14.5,6,'#282233');
+ p(-6,-5.5,11.5,9,top.shade);p(-5.5,-5,9.5,7,top.cloth);
+ p(-4.5,-4.5,1,6,top.trim);p(2,-4.5,1,6,top.trim);
+ p(-4.5,1,8,2,'#543943');p(-1,1,2,1.5,'#e4b978');
+ p(-7,-3.5,2,3,top.cloth);p(-7.5,-1,2.5,2.5,'#d7956b');
+ p(-5,-7,10,2.5,'#84434b');p(-4.5,-6.5,9,1.5,'#d16758');p(-1,-5.5,2,2,'#e27c66');
  paintFace(p);
  const hat=appearance[equipped.hat];
  if(hat){
-  p(-7,-18,14,3,'#352733');p(-5.5,-21,10,4,hat.metal);p(-4.5,-20.5,8,1.5,hat.lit);
-  p(-6.5,-18,14.5,1.5,hat.trim);p(3,-19.5,3,2.5,'#fff0b5');p(4,-19,1.5,1,'#fff9dc');
+  p(-8,-20,15,2.5,'#3a2935');p(-6.5,-24,11,4,hat.metal);p(-5.5,-23.5,9,1.5,hat.lit);
+  p(-7.5,-20,15,1.5,hat.trim);p(2.5,-21.5,3.5,2.5,'#ffe9b1');p(3,-21,2,1,'#fffadd');
  }
  const skin=pickSkins[weapon()];
  context.save();context.translate(8,-2);context.rotate(hit>0?-2.2+(1-hit/.22)*3.05:.48);
@@ -387,7 +383,6 @@ function mine(manual){
  }
  if(boss&&(center===boss||(radius&&dist(center,boss)<=radius))){
   boss.hp-=center===boss?damage:Math.max(1,damage-1);
-  shake=2;
   if(boss.hp<=0){
    bossWins++;mined=Math.max(mined,bossWins*120);xp+=20;
    const gem=level()>=12?(bossWins%2?6:11):level()>=8?5:3;
@@ -435,7 +430,7 @@ function breakRocks(queue,broken,center,manual,target){
   best=Math.max(best,broken.size);
   note(broken.size+'연쇄! · 최고 '+best+'연쇄');
   if(combo?.text!=='BOSS')combo={x:center.x,y:center.y,text:broken.size+' CHAIN',age:0};
-  shake=Math.min(4,broken.size*.28);flash=.24;
+  if(manual)flash=.24;
   if(manual)navigator.vibrate?.(25);
  }else note(ores[queue[0][0].type][0]+' 파쇄');
  if(level()>oldLevel){note(el('note').textContent+' · 광부 Lv. '+level()+'!');exposeVeins()}
@@ -507,44 +502,100 @@ function drawProp({x,y,kind}){
   drawRect(x+4,y-3,5,.5,'#60404a');
  }
 }
+const boulderArt=[
+ '         ooooo            ',
+ '       oohhhmmooo         ',
+ '     oohhHHHmmmmsso       ',
+ '    ohhHHHmmmmmmmssso     ',
+ '   ohhHHmmmmmmmmmsssso    ',
+ '  oohhmmmmHHmmmmsssssso   ',
+ '  ohhmmmHmmmmmssssssssso  ',
+ ' ohhmmmmmsssssssssssssso  ',
+ ' ohmmmmssssssmmsssssssso  ',
+ ' ommmssssssssssssssssso   ',
+ '  osssssssssssdddddddo    ',
+ '   odddddddddddddddoo     ',
+ '     oooooooooooooo       '
+];
+const crystalArt=[
+ '           gg             ',
+ '          gLgg            ',
+ '          gLLgg    gg     ',
+ '    gg    gLLCg   gLg     ',
+ '   gLgg   gLLCg  gLCgg    ',
+ '   gLCg   gHCCg  gLCCg    ',
+ '    gCg  ggHCDg  gHCDg    ',
+ '    gCDg ggHCDg ggHCDg    ',
+ '    gCDg gHCDDg gHCDDg    ',
+ '     gDg gHCDDg gDDDDg    ',
+ '     gg   gDDg  gDDgg     '
+];
+const metalArt=[
+ '         gg               ',
+ '        gLLg              ',
+ '       gLHCCgg            ',
+ '    ggggHCCDDgg           ',
+ '   gLLgHCDDDgg    ggg     ',
+ '  gLHCDDDgg      gLLgg    ',
+ '   gCDgg        gHCCg     ',
+ '    gg          gDDg      ',
+ '                 gg       '
+];
+function mixColor(hex,base,fraction){
+ return '#'+[1,3,5].map(i=>{
+  const a=parseInt(hex.slice(i,i+2),16), b=parseInt(base.slice(i,i+2),16);
+  return Math.round(a+(b-a)*fraction).toString(16).padStart(2,'0');
+ }).join('');
+}
+const rockSprites=new Map();
+function rockSprite(type,variant){
+ const key=type*2+variant;
+ if(rockSprites.has(key))return rockSprites.get(key);
+ const art=document.createElement('canvas');art.width=30;art.height=30;
+ const ctx=art.getContext('2d');
+ const color=ores[type][1],plain=type>=8&&type<=10;
+ const base=plain?color:'#6f6377';
+ const paint=(rows,top,colors)=>{
+  rows.forEach((row,y)=>[...row].forEach((mark,x)=>{
+   if(!colors[mark])return;
+   ctx.fillStyle=colors[mark];ctx.fillRect(variant?27-x:x+2,y+top,1,1);
+  }));
+ };
+ paint(boulderArt,13,{
+  o:'#271f2c',d:mixColor(base,'#201d2b',.58),s:mixColor(base,'#2a2233',.34),m:base,
+  h:mixColor(base,'#ccb1a6',.3),H:mixColor(base,'#d4c7bf',.53)
+ });
+ if(!plain)paint(type>=5?crystalArt:metalArt,type>=5?3:13,{
+  g:mixColor(color,'#261d31',.75),D:mixColor(color,'#392638',.52),C:color,
+  H:mixColor(color,'#fff0d3',.36),L:mixColor(color,'#fff5de',.74)
+ });
+ rockSprites.set(key,art);
+ return art;
+}
 function drawRock(rock){
  const {x,y,type,hp}=rock;
- const [,color,max]=ores[type];
- const variant=(Math.floor(x*7+y*13)%4);
- drawRect(x-7,y+2,15,5,'#241d2a');
- drawRect(x-6,y-3,13,8,'#403340');
- drawRect(x-4,y-6,8,10,'#594650');
- drawRect(x-5,y-4.5,3,1,'#76616a');drawRect(x-5.5,y-1,1.5,3,'#5d4b57');
- drawRect(x+3,y+2,2.5,2,'#312a36');drawRect(x+5,y+.5,1.5,2,'#423640');
- drawRect(x-5+variant,y+3.5,2.5,.5,'#77616c');
- if(type>=8&&type<=10){
-  drawRect(x-5,y-3,10,5,color);drawRect(x-3,y-5,6,3,color);
-  drawRect(x-3,y-5,4,1,type===10?'#9d87c6':'#a4909f');
-  drawRect(x+3,y+1,2,2,'#3a303e');
-  drawRect(x-4,y-2.5,2.5,.5,'#ae9cab');drawRect(x-3,y-2,1,1,'#958291');
-  drawRect(x+variant-2,y-1,3,.5,'#5f5362');drawRect(x+variant-1,y-.5,2,1,'#685969');
-  if(hp<max){drawRect(x,y-4,1,6,'#2c2330');drawRect(x-2,y,3,1,'#2c2330')}
-  return;
+ const variant=(Math.floor(x*7+y*13)&1);
+ g.drawImage(rockSprite(type,variant),Math.round(x*2)/2-7.5,Math.round(y*2)/2-8,15,15);
+ if(hp<ores[type][2]){
+  drawRect(x-.5,y-2,.5,4,'#291f30');drawRect(x-2,y+.5,2,.5,'#291f30');
+  drawRect(x+.5,y+1,1.5,.5,'#291f30');drawRect(x+1.5,y+1.5,.5,1.5,'#291f30');
+  drawRect(x+.5,y-1,.5,1.5,'#debaaa80');
  }
- if(type>=5){
-  drawRect(x-4,y-5,3,8,color);drawRect(x-1,y-8,3,11,color);drawRect(x+3,y-4,2,7,color);
-  drawRect(x,y-7,1,5,'#fff0ca');drawRect(x-3,y-4,1,4,'#d4b6c8');
-  drawRect(x+.5,y-1,.5,3,'#ece9ff');drawRect(x+2,y-1,1,3,'#33284d');
-  drawRect(x-4.5,y-2,.5,3,color);drawRect(x+4,y-3,.5,2,'#fff5d4');
- }else{
-  drawRect(x-4,y-3,4,3,color);drawRect(x-1,y-5,4,5,color);drawRect(x+2,y+1,3,2,color);
-  drawRect(x,y-5,2,1,'#f3d2a5');drawRect(x-4,y-2,1,1,'#e1b395');
-  drawRect(x-2.5,y-3,1,.5,'#fff0c2');drawRect(x+1.5,y-.5,3,.5,'#342a37');drawRect(x+3,y+1,.5,.5,'#ffdbad');
- }
- if(hp<max){drawRect(x+1,y-4,1,5,'#382431');drawRect(x-1,y,3,1,'#382431')}
 }
+
 function drawPlayer(){
  drawMiner(g,player.x,player.y,player.dir,player.walk,swing);
 }
-function render(){
- const camX=clamp(player.x-W/2,0,world-W),camY=clamp(player.y-H/2,0,world-H);
+let camera=null;
+function render(dt){
+ const targetX=clamp(player.x-W/2,0,world-W),targetY=clamp(player.y-H/2,0,world-H);
+ if(!camera)camera={x:targetX,y:targetY};
+ const follow=1-Math.exp(-dt*16);
+ camera.x=clamp(camera.x+(targetX-camera.x)*follow,0,world-W);
+ camera.y=clamp(camera.y+(targetY-camera.y)*follow,0,Math.max(0,world-H));
+ const camX=Math.round(camera.x*2)/2,camY=Math.round(camera.y*2)/2;
  drawRect(0,0,W,H,'#362937');g.save();
- g.translate(Math.round(-camX+(shake?Math.random()*shake-shake/2:0)),Math.round(-camY));
+ g.translate(-camX,-camY);
  for(let y=Math.floor(camY/16)*16;y<camY+H+16;y+=16)for(let x=Math.floor(camX/16)*16;x<camX+W+16;x+=16){
   const hash=((x*17)^(y*53)^(x*y))>>>0;
   drawRect(x,y,16,16,['#302b36','#352e38','#39313a','#322c38'][hash>>4&3]);
@@ -838,7 +889,7 @@ function frame(now){
  if(el('gear').open||el('rewards').open){requestAnimationFrame(frame);return}
  const height=Math.round(W*view.clientHeight/Math.max(1,view.clientWidth));
  if(height!==H){H=height;view.height=H*2}
- g.setTransform(2,0,0,2,0,0);
+ g.setTransform(2,0,0,2,0,0);g.imageSmoothingEnabled=false;
  let dx=(keys.has('ArrowRight')||keys.has('KeyD')?1:0)-(keys.has('ArrowLeft')||keys.has('KeyA')?1:0);
  let dy=(keys.has('ArrowDown')||keys.has('KeyS')?1:0)-(keys.has('ArrowUp')||keys.has('KeyW')?1:0);
  if(stick){dx+=stick.dx/24;dy+=stick.dy/24}
@@ -849,7 +900,8 @@ function frame(now){
   if(Math.abs(dx)>.15)player.dir=Math.sign(dx);
   player.walk+=dt;
   if(Math.floor(player.walk*2)!==Math.floor((player.walk-dt)*2))exposeVeins();
-  update();
+  movementHudTimer+=dt;
+  if(movementHudTimer>=.10){movementHudTimer=0;update()}
  }
  if(wave&&(wave.age+=dt)>=.30)wave=null;
  if(combo&&(combo.age+=dt)>=1)combo=null;
@@ -860,10 +912,10 @@ function frame(now){
   if(distance>0&&distance<19&&boss.recoil===0){
    player.x=clamp(player.x+(player.x-boss.x)*18/distance,10,world-10);
    player.y=clamp(player.y+(player.y-boss.y)*18/distance,16,world-10);
-   boss.recoil=1.3;shake=3;
+   boss.recoil=1.3;
   }
  }
- cooldown-=dt;swing=Math.max(0,swing-dt);shake=Math.max(0,shake-14*dt);flash=Math.max(0,flash-dt);
+ cooldown-=dt;swing=Math.max(0,swing-dt);flash=Math.max(0,flash-dt);
  if(holding||keys.has('Space'))strike();
  drillTimer+=dt;
  if(drill&&drillTimer>.85){drillTimer=0;mine(false)}
@@ -880,7 +932,7 @@ function frame(now){
  tickSkills(dt);
  dust=dust.filter(p=>{p.age+=dt;if(p.age>=0){p.x+=p.dx*dt;p.y+=p.dy*dt;p.dy+=155*dt}return p.age<.34});
  saveTimer+=dt;if(saveTimer>4){saveTimer=0;save()}
- render();requestAnimationFrame(frame);
+ render(dt);requestAnimationFrame(frame);
 }
 exposeVeins();update();
 if(idleCount){note('방치 채굴 · 광석 '+idleCount+'개 · +'+idleCount+' XP');save()}
